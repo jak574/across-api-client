@@ -2,8 +2,11 @@ from datetime import datetime
 from ..base import ACROSSBase
 from ..user import ACROSSUser
 from ..jobstatus import JobStatus, JobStatusSchema
-from ..visibility import VisWindowSchema, VisibilityArgSchema
+from ..daterange import ACROSSDateRange
 from marshmallow import Schema, fields, post_load
+from ..visibility import VisWindowSchema, VisibilityArgSchema
+from .constants import MISSION
+from ..resolve import ACROSSResolveName
 
 
 class VisibilitySchema(Schema):
@@ -15,7 +18,7 @@ class VisibilitySchema(Schema):
         return Visibility(**data)
 
 
-class Visibility(ACROSSBase, ACROSSUser):
+class Visibility(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     # Type hints
     ra: float
     dec: float
@@ -25,7 +28,7 @@ class Visibility(ACROSSBase, ACROSSUser):
     entries: list
 
     # API definitions
-    _mission = "Swift"
+    _mission = MISSION
     _api_name = "Visibility"
     _schema = VisibilitySchema()
     _arg_schema = VisibilityArgSchema()
