@@ -35,7 +35,7 @@ class ACROSSBase:
     @property
     def arguments(self) -> dict:
         keys = [key for key in self.allowed_args if key in self.__dict__.keys()]
-        return {key: self.__dict__[key] for key in keys}
+        return {key: self._arg_schema.dump(self)[key] for key in keys}
 
     @property
     def parameters(self) -> dict:
@@ -59,8 +59,10 @@ class ACROSSBase:
 
     def validate(self):
         errors = self._arg_schema.validate(self.arguments)
-        [self.status.errors.append(v) for v in errors.values()]
-        return
+        [self.status.errors.append(f"{k}: {v[0]}") for k, v in errors.items()]
+        if len(self.status.errors) == 0:
+            return True
+        return False
 
     @property
     def _table(self) -> tuple:
