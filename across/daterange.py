@@ -8,7 +8,7 @@ class DateTime(fields.DateTime):
     """Version of DateTime that accepts multiple formats"""
 
     def _serialize(self, value, attr, obj, **kwargs) -> str:
-        return str(convert_to_dt(value))
+        return convert_to_dt(value).strftime("%Y-%m-%d %H:%M:%S")
 
 
 class DateRangeSchema(Schema):
