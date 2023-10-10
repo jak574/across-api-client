@@ -72,10 +72,10 @@ class ACROSSBase:
             table = [t._table[1][0] for t in self.entries]
         else:
             if hasattr(self, "_arg_schema"):
-                _parameters = list(self._arg_schema.fields.keys())
+                _parameters = list(self.parameters.keys())
             else:
                 _parameters = []
-            _parameters += list(self._schema.fields.keys())
+            _parameters += list(self.arguments.keys())
             try:
                 _parameters.pop(_parameters.index("username"))
                 _parameters.pop(_parameters.index("api_key"))
