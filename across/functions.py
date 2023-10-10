@@ -56,7 +56,7 @@ _int_regex = r"^(0|[1-9][0-9]+)$"
 
 def convert_timedelta(
     length: Union[str, float, timedelta, TimeDelta, Quantity, None], units=u.day
-) -> Optional[timedelta]:
+) -> timedelta:
     """Convert various timedelta formats to swiftdatetime or datetime
 
     Parameters
@@ -89,8 +89,6 @@ def convert_timedelta(
         length = length.total_seconds() / divisor
     elif type(length) is TimeDelta:
         length = length.to_datetime().total_seconds() / divisor  # type: ignore
-    elif length is None:
-        length = None
     else:
         try:
             length = float(length)  # type: ignore
@@ -101,7 +99,7 @@ def convert_timedelta(
     return timedelta(days=length)  # type: ignore
 
 
-def convert_to_dt(value: Union[str, date, datetime, Time, None]) -> Optional[datetime]:
+def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
     """Convert various date formats to datetime
 
     Parameters
@@ -123,7 +121,8 @@ def convert_to_dt(value: Union[str, date, datetime, Time, None]) -> Optional[dat
     if type(value) == str:
         if re.match(_datetime_regex, value):
             if "." in value:
-                # Do this because "fromisoformat" is restricted to 0, 3 or 6 decimal plaaces
+                # Do this because "fromisoformat" is restricted to 0, 3 or 6
+                # decimal plaaces
                 dtvalue = datetime.strptime(value, "%Y-%m-%d %H:%M:%S.%f")
             else:
                 dtvalue = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
@@ -147,8 +146,6 @@ def convert_to_dt(value: Union[str, date, datetime, Time, None]) -> Optional[dat
             # Strip out timezone info and convert to UTC
             value = value.astimezone(timezone.utc).replace(tzinfo=None)
         dtvalue = value  # Just pass through un molested
-    elif value is None:
-        dtvalue = None
     elif type(value) is Time:
         dtvalue = value.datetime
     else:
