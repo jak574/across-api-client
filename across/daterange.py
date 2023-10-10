@@ -28,5 +28,6 @@ class ACROSSDateRange:
     @length.setter
     def length(self, td: Union[float, timedelta, str, None]):
         self._length = td
-        if hasattr(self, "end") is False or self.end is not None:
-            self.end = convert_to_dt(self.begin) + convert_timedelta(td)
+        if hasattr(self, "begin") and self.begin is not None:
+            if hasattr(self, "end") is False or self.end is not None:
+                self.end = convert_to_dt(self.begin) + convert_timedelta(td)
