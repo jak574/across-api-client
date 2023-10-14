@@ -5,15 +5,17 @@ from .functions import tablefy
 from marshmallow import Schema
 from .jobstatus import JobStatus
 
-SchemaType = type(Schema)
-
 
 class ACROSSBase:
+    """
+    Mixin for ACROSS API Classes including common methods for all API classes.
+    """
+
     # Type hints
     entries: list
     status: JobStatus
 
-    # API descriptors
+    # API descriptors type hints
     _schema: Schema
     _arg_schema: Schema
     _mission: str
@@ -23,41 +25,103 @@ class ACROSSBase:
         return self.entries[i]
 
     @property
-    def get_url(self) -> str:
-        api_url = f"{API_URL}{self._mission}/{self._api_name}?"
-        api_params = urlencode(self.arguments)
-        return api_url + api_params
+    def api_url(self) -> str:
+        """
+        URL for this API call.
+
+        Returns
+        -------
+        str
+            URL for API call
+        """
+        return f"{API_URL}{self._mission}/{self._api_name}?"
 
     @property
-    def allowed_args(self) -> list:
-        return list(self._arg_schema.fields.keys())
+    def get_url(self) -> str:
+        """
+        Return URL for GET request.
+
+        Returns
+        -------
+        str
+            URL for GET API request
+        """
+        api_params = urlencode(self.arguments)
+        return self.api_url + api_params
 
     @property
     def arguments(self) -> dict:
-        keys = [key for key in self.allowed_args if key in self.__dict__.keys()]
-        return {key: self._arg_schema.dump(self)[key] for key in keys}
+        """
+        Summary of validated arguments for API call.
+
+        Returns
+        -------
+        dict
+            Dictionary of arguments with values
+        """
+        return {k: v for k, v in self._arg_schema.dump(self).items() if v is not None}
 
     @property
     def parameters(self) -> dict:
+        """
+        Return parameters as dict
+
+        Returns
+        -------
+        dict
+            Dictionary of parameters
+        """
         return {key: getattr(self, key) for key in self._schema.fields.keys()}
 
     @parameters.setter
     def parameters(self, params: dict):
+        """
+        Set API parameters from a given dict
+
+        Parameters
+        ----------
+        params : dict
+            Dictionary of class parameters
+        """
         for key in self._schema.fields.keys():
             if key in params.keys():
                 setattr(self, key, params[key])
 
     def get(self) -> bool:
+        """
+        Perform a 'GET' submission to ACROSS API. Used for fetching
+        information.
+
+        Returns
+        -------
+        bool
+            Was the get successful?
+
+        Raises
+        ------
+        HTTPError
+            Raised if GET doesn't return a 200 response.
+        """
         if self.validate():
             req = requests.get(self.get_url)
             if req.status_code == 200:
+                # Parse, validate and record values from returned API JSON
                 self.parameters = self._schema.loads(req.text).parameters
                 return True
-            else:
-                raise Exception(f"Query failed with HTML code {req.status_code}")
+            # Raise an exception if the HTML response was not 200
+            req.raise_for_status()
         return False
 
-    def validate(self):
+    def validate(self) -> bool:
+        """"""
+        """Perform validation of arguments against schema, record those errors
+        in JobStatus
+
+        Returns
+        -------
+        bool
+            Did validation pass with no errors? (True | False)
+        """
         errors = self._arg_schema.validate(self.arguments)
         [self.status.errors.append(f"{k}: {v[0]}") for k, v in errors.items()]
         if len(self.status.errors) == 0:
@@ -66,21 +130,33 @@ class ACROSSBase:
 
     @property
     def _table(self) -> tuple:
-        """Table of details of the class"""
+        """
+        Table with head showing results of the API query.
+
+        Returns
+        -------
+        tuple
+            Tuple containing two lists, the header and the table data
+        """
         if hasattr(self, "entries") and len(self.entries) > 0:
             header = self.entries[0]._table[0]
             table = [t._table[1][0] for t in self.entries]
         else:
+            # Start with arguments
             if hasattr(self, "_arg_schema"):
                 _parameters = list(self.parameters.keys())
             else:
                 _parameters = []
             _parameters += list(self.arguments.keys())
+            # Don't include username/api_key in table
             try:
                 _parameters.pop(_parameters.index("username"))
                 _parameters.pop(_parameters.index("api_key"))
             except ValueError:
                 pass
+
+            # Removed repeated values
+            _parameters = list(set(_parameters))
 
             header = [par for par in _parameters]
             table = []
@@ -94,6 +170,13 @@ class ACROSSBase:
         return header, table
 
     def _repr_html_(self) -> str:
+        """Return a HTML summary of the API data, for e.g. Jupyter.
+
+        Returns
+        -------
+        str
+            HTML summary of data
+        """
         if self.status.status == "Rejected":
             return "<b>Rejected with the following error(s): </b>" + " ".join(
                 self.status.errors
