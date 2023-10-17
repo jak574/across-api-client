@@ -34,7 +34,7 @@ class ACROSSBase:
         str
             URL for API call
         """
-        return f"{API_URL}{self._mission}/{self._api_name}?"
+        return f"{API_URL}{self._mission}/{self._api_name}"
 
     @property
     def get_url(self) -> str:
@@ -47,7 +47,7 @@ class ACROSSBase:
             URL for GET API request
         """
         api_params = urlencode(self.arguments)
-        return self.api_url + api_params
+        return f"{self.api_url}?{api_params}"
 
     @property
     def arguments(self) -> dict:
@@ -103,7 +103,32 @@ class ACROSSBase:
             Raised if GET doesn't return a 200 response.
         """
         if self.validate():
-            req = requests.get(self.get_url)
+            req = requests.get(self.api_url, params=self.arguments)
+            if req.status_code == 200:
+                # Parse, validate and record values from returned API JSON
+                self.parameters = self._schema.loads(req.text).parameters
+                return True
+            # Raise an exception if the HTML response was not 200
+            req.raise_for_status()
+        return False
+
+    def get(self) -> bool:
+        """
+        Perform a 'PUT' submission to ACROSS API. Used for pushing/replacing
+        information.
+
+        Returns
+        -------
+        bool
+            Was the get successful?
+
+        Raises
+        ------
+        HTTPError
+            Raised if GET doesn't return a 200 response.
+        """
+        if self.validate():
+            req = requests.put(self.api_url, params=self.arguments)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 self.parameters = self._schema.loads(req.text).parameters
