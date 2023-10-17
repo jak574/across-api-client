@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 import requests
+from zmq import has
 from .constants import API_URL
 from .functions import tablefy
 from marshmallow import Schema
@@ -204,7 +205,7 @@ class ACROSSBase:
         str
             HTML summary of data
         """
-        if self.status.status == "Rejected":
+        if hasattr(self, "status") and self.status.status == "Rejected":
             return "<b>Rejected with the following error(s): </b>" + " ".join(
                 self.status.errors
             )
