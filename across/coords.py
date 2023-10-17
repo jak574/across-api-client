@@ -20,7 +20,6 @@ def coord_convert(
     float | None
         Coordinate expressed as a float. Just pass through a None.
     """
-    print(type(coord), coord)
     if coord is None:
         return None
     if type(coord) is Quantity:
