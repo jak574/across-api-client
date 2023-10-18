@@ -76,16 +76,18 @@ class ACROSSBase:
     @parameters.setter
     def parameters(self, params: dict):
         """
-        Set API parameters from a given dict
+        Set API parameters from a given dict which is validated from self._schema
 
         Parameters
         ----------
         params : dict
             Dictionary of class parameters
         """
-        for key in self._schema.fields.keys():
-            if key in params.keys():
-                setattr(self, key, params[key])
+        _ = [
+            setattr(self, k, v)
+            for k, v in self._schema.load(params).__dict__.items()
+            if v is not None
+        ]
 
     def get(self) -> bool:
         """
@@ -107,7 +109,10 @@ class ACROSSBase:
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 self.parameters = self._schema.loads(req.text).parameters  # type: ignore
-                return True
+                if self.status.status == "Accepted":
+                    return True
+                else:
+                    return False
             # Raise an exception if the HTML response was not 200
             req.raise_for_status()
         return False
@@ -134,7 +139,10 @@ class ACROSSBase:
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 self.parameters = self._schema.loads(req.text).parameters  # type: ignore
-                return True
+                if self.status.status == "Accepted":
+                    return True
+                else:
+                    return False
             # Raise an exception if the HTML response was not 200
             req.raise_for_status()
         return False
