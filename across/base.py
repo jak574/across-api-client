@@ -1,6 +1,5 @@
 from urllib.parse import urlencode
 import requests
-from zmq import has
 from .constants import API_URL
 from .functions import tablefy
 from marshmallow import Schema
@@ -60,7 +59,7 @@ class ACROSSBase:
         dict
             Dictionary of arguments with values
         """
-        return {k: v for k, v in self._arg_schema.dump(self).items() if v is not None}
+        return {k: v for k, v in self._arg_schema.dump(self).items() if v is not None}  # type: ignore
 
     @property
     def parameters(self) -> dict:
@@ -72,7 +71,7 @@ class ACROSSBase:
         dict
             Dictionary of parameters
         """
-        return {key: getattr(self, key) for key in self._schema.fields.keys()}
+        return {k: v for k, v in self._schema.dump(self).items() if v is not None}  # type: ignore
 
     @parameters.setter
     def parameters(self, params: dict):
@@ -107,7 +106,7 @@ class ACROSSBase:
             req = requests.get(self.api_url, params=self.arguments)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                self.parameters = self._schema.loads(req.text).parameters
+                self.parameters = self._schema.loads(req.text).parameters  # type: ignore
                 return True
             # Raise an exception if the HTML response was not 200
             req.raise_for_status()
@@ -134,7 +133,7 @@ class ACROSSBase:
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                self.parameters = self._schema.loads(req.text).parameters
+                self.parameters = self._schema.loads(req.text).parameters  # type: ignore
                 return True
             # Raise an exception if the HTML response was not 200
             req.raise_for_status()
