@@ -1,16 +1,18 @@
-from across.base import ACROSSBase
-from across.coords import CoordSchema
-from across.user import UserArgSchema
-from across.daterange import DateRangeSchema, ACROSSDateRange
-from across.jobstatus import JobStatus, JobStatusSchema
+from ..base import ACROSSBase
+from ..coords import CoordSchema
+from ..user import UserArgSchema
+from ..daterange import DateRangeSchema, ACROSSDateRange
+from ..jobstatus import JobStatus, JobStatusSchema
 from marshmallow import fields, post_load, Schema
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Optional
+from ..daterange import DateTime
 
 
 class PlanEntrySchema(CoordSchema):
-    begin = fields.DateTime()
-    end = fields.DateTime()
+    begin = DateTime(allow_none=True)
+    end = DateTime(allow_none=True)
     targname = fields.Str()
     targetid = fields.Int()
     obsid = fields.Int()
@@ -37,13 +39,12 @@ class PlanEntry(ACROSSBase):
     mode: str
 
 
-class PlanArgSchema(UserArgSchema, CoordSchema, DateRangeSchema):
-    radius = fields.Float()
-    obsid = fields.Int()
-    targetid = fields.Int()
-    # entries = fields.List(
-    #     cls_or_instance=fields.Nested(PlanEntrySchema), required=False, allow_none=True
-    # )
+class PlanArgSchema(UserArgSchema, CoordSchema):
+    begin = DateTime(allow_none=True)
+    end = DateTime(allow_none=True)
+    radius = fields.Float(allow_none=True)
+    obsid = fields.Int(allow_none=True)
+    targetid = fields.Int(allow_none=True)
 
 
 class PlanSchema(Schema):
@@ -57,13 +58,21 @@ class PlanSchema(Schema):
         return Plan(**data)
 
 
+@dataclass
 class Plan(ACROSSBase, ACROSSDateRange):
     _schema = PlanSchema()
     _arg_schema = PlanArgSchema()
     _mission = "NICER"
     _api_name = "Plan"
 
-    def __init__(self, **kwargs):
-        self.entries = []
-        self.status = JobStatus()
-        [setattr(self, k, a) for k, a in kwargs.items()]
+    ra: Optional[float] = None
+    dec: Optional[float] = None
+    begin: Optional[datetime] = None
+    end: Optional[datetime] = None
+    radius: Optional[float] = None
+    obsid: Optional[int] = None
+    targetid: Optional[int] = None
+    entries: list[PlanEntry] = field(default_factory=list)
+
+    # JobStatus
+    status: JobStatus = JobStatus()
