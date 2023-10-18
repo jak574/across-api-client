@@ -1,14 +1,12 @@
 import re
-from datetime import datetime
-from astropy.units import Quantity
 from datetime import datetime, timedelta, date, timezone
-import re
+from astropy.units import Quantity
 from dateutil import parser
 import warnings
 from typing import Union, Optional
 import astropy.units as u
-from astropy.units import Quantity
 from astropy.time import TimeDelta, Time
+import numpy as np
 
 
 def tablefy(table: list, header: Optional[list] = None) -> str:
@@ -47,11 +45,8 @@ def tablefy(table: list, header: Optional[list] = None) -> str:
 
 # Regex for matching date, time and datetime strings
 _date_regex = r"^[0-2]\d{3}-(0?[1-9]|1[012])-([0][1-9]|[1-2][0-9]|3[0-1])?$"
-_time_regex = r"^([0-9]:|[0-1][0-9]:|2[0-3]:)[0-5][0-9]:[0-5][0-9]+(\.\d+)?$"
 _iso8601_regex = r"^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$"
-_datetime_regex = r"^[0-2]\d{3}-(0?[1-9]|1[012])-([0][1-9]|[1-2][0-9]|3[0-1]) ([0-9]:|[0-1][0-9]:|2[0-3]:)[0-5][0-9]:[0-5][0-9]+(\.\d+)?$"
-_float_regex = r"^[+-]?(?=\d*[.eE])(?=\.?\d)\d*\.?\d*(?:[eE][+-]?\d+)?$"
-_int_regex = r"^(0|[1-9][0-9]+)$"
+_datetime_regex = r"^[0-2]\d{3}-(0?[1-9]|1[012])-([0][1-9]|[1-2][0-9]|3[0-1])[\sT]([0-9]:|[0-1][0-9]:|2[0-3]:)[0-5][0-9]:[0-5][0-9]+(\.\d+)?$"
 
 
 def convert_timedelta(
@@ -117,9 +112,11 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
     TypeError
         Raised if incorrect format is given for conversion.
     """
-
-    if type(value) == str:
+    if type(value) == str or type(value) == np.str_:
         if re.match(_datetime_regex, value):
+            # Remove the rogue T in 2023-10-17T00:00:00 style strings
+            value = value.replace("T", " ")
+            # Figure out if we have decimal places
             if "." in value:
                 # Do this because "fromisoformat" is restricted to 0, 3 or 6
                 # decimal plaaces
