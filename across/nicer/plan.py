@@ -1,8 +1,9 @@
+from across.resolve import ACROSSResolveName
 from ..base import ACROSSBase
 from ..coords import CoordSchema
-from ..user import UserArgSchema
-
-# from ..daterange import DateRangeSchema, ACROSSDateRange
+from ..user import ACROSSUser, UserArgSchema
+from .constants import MISSION
+from ..daterange import ACROSSDateRange
 from ..jobstatus import JobStatus, JobStatusSchema
 from marshmallow import fields, post_load, Schema
 from dataclasses import dataclass, field, InitVar
@@ -61,7 +62,7 @@ class PlanSchema(Schema):
 
 
 @dataclass
-class Plan(ACROSSBase):
+class PlanAlt(ACROSSBase):
     length: InitVar[Optional[float]] = None
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
@@ -83,3 +84,23 @@ class Plan(ACROSSBase):
     def __post_init__(self, length):
         if self.begin is not None and length is not None:
             self.end = convert_to_dt(self.begin) + convert_timedelta(length)
+
+
+class Plan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+    # Type hints
+    ra: float
+    dec: float
+    begin: datetime
+    end: datetime
+    hires: bool
+    entries: list
+
+    # API definitions
+    _mission = MISSION
+    _schema = PlanSchema()
+    _arg_schema = PlanArgSchema()
+    _api_name = "Plan"
+
+    def __init__(self, **kwargs):
+        self.status = JobStatus()
+        [setattr(self, k, a) for k, a in kwargs.items()]
