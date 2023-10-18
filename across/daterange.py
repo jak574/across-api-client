@@ -7,13 +7,15 @@ from .functions import convert_to_dt, convert_timedelta
 class DateTime(fields.DateTime):
     """Version of DateTime that accepts multiple formats"""
 
-    def _serialize(self, value, attr, obj, **kwargs) -> str:
+    def _serialize(self, value, attr, obj, **kwargs) -> Optional[str]:
+        if value is None:
+            return None
         return convert_to_dt(value).strftime("%Y-%m-%d %H:%M:%S")
 
 
 class DateRangeSchema(Schema):
-    begin = DateTime(format="%Y-%m-%d %H:%M:%S", required=True)
-    end = DateTime(format="%Y-%m-%d %H:%M:%S", required=True)
+    begin = DateTime(format="%Y-%m-%d %H:%M:%S", required=False, allow_none=True)
+    end = DateTime(format="%Y-%m-%d %H:%M:%S", required=False, allow_none=True)
 
 
 class ACROSSDateRange:
