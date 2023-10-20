@@ -103,4 +103,5 @@ class Plan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
     def __init__(self, **kwargs):
         self.status = JobStatus()
+        self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
