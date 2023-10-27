@@ -9,7 +9,6 @@ from ..resolve import ACROSSResolveName
 from ..user import UserArgSchema
 from ..daterange import DateTime
 from ..functions import convert_to_dt
-from dataclasses import dataclass
 
 
 class DateTimeSix(fields.DateTime):
@@ -20,24 +19,25 @@ class DateTimeSix(fields.DateTime):
 
 
 class TOOArgSchema(UserArgSchema):
+    too_id = fields.Int(allow_none=True, required=False)
+
+
+class TOOSchema(Schema):
+    """Schema for the response to a TOO request."""
+    too_id = fields.Int(allow_none=True)
+    username = fields.Str()
+    timestamp = fields.DateTime(allow_none=True)
     trigger_mission = fields.Str(required=True)
     trigger_instrument = fields.Str(required=True)
     trigger_id = fields.Str(required=True)
     trigger_time = DateTimeSix(format="%Y-%m-%d %H:%M:%S.%f", required=True)
     ra = fields.Float(allow_none=True, required=False)
     dec = fields.Float(allow_none=True, required=False)
-    begin = DateTime(format="%Y-%m-%d %H:%M:%S", allow_none=True, required=False)
-    end = DateTime(format="%Y-%m-%d %H:%M:%S", allow_none=True, required=False)
+    begin = DateTime(allow_none=True, required=False)
+    end = DateTime(allow_none=True, required=False)
     exposure = fields.Float(allow_none=True, required=False)
     offset = fields.Float(allow_none=True, required=False)
-
-
-class TOOSchema(Schema):
-    """Schema for the response to a TOO request."""
-
-    too_id = fields.Int(allow_none=True)
-    timestamp = fields.DateTime(allow_none=True)
-    status = fields.Nested(JobStatusSchema)
+    status = fields.Nested(JobStatusSchema, allow_none=True)
 
     @post_load
     def make_too(self, data, **kwargs):
