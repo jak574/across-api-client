@@ -6,10 +6,8 @@ from .constants import MISSION
 from ..daterange import ACROSSDateRange
 from ..jobstatus import JobStatus, JobStatusSchema
 from marshmallow import fields, post_load, Schema
-from dataclasses import dataclass, field, InitVar
-from ..functions import convert_timedelta, convert_to_dt
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 from ..daterange import DateTime
 
 
@@ -50,14 +48,18 @@ class PlanArgSchema(UserArgSchema, CoordSchema):
     targetid = fields.Int(allow_none=True)
 
 
-class PlanSchema(Schema):
+class PlanEntriesSchema(Schema):
     entries = fields.List(
         cls_or_instance=fields.Nested(PlanEntrySchema), required=False, allow_none=True
     )
+
+
+class PlanSchema(PlanEntriesSchema):
+
     status = fields.Nested(JobStatusSchema)
 
     @post_load
-    def create_planentry(self, data, **kwargs):
+    def create_plan(self, data, **kwargs):
         return Plan(**data)
 
 
@@ -73,6 +75,7 @@ class Plan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     # API definitions
     _mission = MISSION
     _schema = PlanSchema()
+    _put_schema = PlanEntriesSchema()
     _arg_schema = PlanArgSchema()
     _api_name = "Plan"
 

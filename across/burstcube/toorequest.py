@@ -22,7 +22,7 @@ class TOOArgSchema(UserArgSchema):
     too_id = fields.Int(allow_none=True, required=False)
 
 
-class TOOSchema(Schema):
+class TOORequestSchema(Schema):
     """Schema for the response to a TOO request."""
     too_id = fields.Int(allow_none=True)
     username = fields.Str()
@@ -37,6 +37,9 @@ class TOOSchema(Schema):
     end = DateTime(allow_none=True, required=False)
     exposure = fields.Float(allow_none=True, required=False)
     offset = fields.Float(allow_none=True, required=False)
+
+
+class TOOSchema(TOORequestSchema):
     status = fields.Nested(JobStatusSchema, allow_none=True)
 
     @post_load
@@ -61,6 +64,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _mission = MISSION
     _api_name = "TOO"
     _schema = TOOSchema()
+    _put_schema = TOORequestSchema()
     _arg_schema = TOOArgSchema()
 
     def __init__(self, **kwargs):

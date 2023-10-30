@@ -134,7 +134,7 @@ class ACROSSBase:
         """
         if self.validate():
             req = requests.put(
-                self.api_url, params=self.arguments, json=self._schema.dumps(self)
+                self.api_url, params=self.arguments, json=self._put_schema.dump(self)
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
