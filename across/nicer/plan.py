@@ -28,7 +28,7 @@ class PlanEntrySchema(CoordSchema):
 @dataclass
 class PlanEntry(ACROSSBase):
     _schema = PlanEntrySchema()
-    _arg_schema = PlanEntrySchema()
+    _get_schema = PlanEntrySchema()
     ra: float
     dec: float
     begin: datetime
@@ -76,7 +76,7 @@ class Plan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _mission = MISSION
     _schema = PlanSchema()
     _put_schema = PlanEntriesSchema()
-    _arg_schema = PlanArgSchema()
+    _get_schema = PlanArgSchema()
     _api_name = "Plan"
 
     def __init__(self, **kwargs):

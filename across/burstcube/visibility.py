@@ -31,7 +31,7 @@ class Visibility(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _mission = MISSION
     _api_name = "Visibility"
     _schema = VisibilitySchema()
-    _arg_schema = VisibilityArgSchema()
+    _get_schema = VisibilityArgSchema()
 
     def __init__(self, **kwargs):
         self.status = JobStatus()

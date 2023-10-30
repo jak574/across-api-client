@@ -26,7 +26,7 @@ class VisWindowSchema(VWSchema):
 @dataclass
 class VisWindow(VW):
     _schema = VisWindowSchema()
-    _arg_schema = VisWindowSchema()
+    _get_schema = VisWindowSchema()
     begin: datetime
     end: datetime
     initial: str
@@ -60,7 +60,7 @@ class Visibility(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _mission = MISSION
     _api_name = "Visibility"
     _schema = VisibilitySchema()
-    _arg_schema = VisibilityArgSchema()
+    _get_schema = VisibilityArgSchema()
 
     def __init__(self, **kwargs):
         self.status = JobStatus()

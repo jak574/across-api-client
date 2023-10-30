@@ -25,7 +25,7 @@ class VisWindow(ACROSSBase):
     begin: datetime
     end: datetime
     _schema = VisWindowSchema()
-    _arg_schema = _schema
+    _get_schema = _schema
 
     @property
     def exposure(self):

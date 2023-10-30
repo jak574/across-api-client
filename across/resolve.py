@@ -32,7 +32,7 @@ class Resolve(ACROSSBase, ACROSSUser):
     _mission = "ACROSS"
     _api_name = "Resolve"
     _schema = ResolveSchema()
-    _arg_schema = ResolveArgSchema()
+    _get_schema = ResolveArgSchema()
 
     def __init__(self, name: Optional[str] = None, **kwargs):
         self.status = JobStatus()

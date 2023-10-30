@@ -17,7 +17,7 @@ class ACROSSBase:
 
     # API descriptors type hints
     _schema: Schema
-    _arg_schema: Schema
+    _get_schema: Schema
     _mission: str
     _api_name: str = __name__
 
@@ -59,7 +59,7 @@ class ACROSSBase:
         dict
             Dictionary of arguments with values
         """
-        return {k: v for k, v in self._arg_schema.dump(self).items() if v is not None}  # type: ignore
+        return {k: v for k, v in self._get_schema.dump(self).items() if v is not None}  # type: ignore
 
     @property
     def parameters(self) -> dict:
@@ -157,7 +157,7 @@ class ACROSSBase:
         bool
             Did validation pass with no errors? (True | False)
         """
-        errors = self._arg_schema.validate(self.arguments)
+        errors = self._get_schema.validate(self.arguments)
         [self.status.errors.append(f"{k}: {v[0]}") for k, v in errors.items()]
         if len(self.status.errors) == 0:
             return True
@@ -178,7 +178,7 @@ class ACROSSBase:
             table = [t._table[1][0] for t in self.entries]
         else:
             # Start with arguments
-            if hasattr(self, "_arg_schema"):
+            if hasattr(self, "_get_schema"):
                 _parameters = list(self.parameters.keys())
             else:
                 _parameters = []

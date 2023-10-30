@@ -65,7 +65,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _api_name = "TOO"
     _schema = TOOSchema()
     _put_schema = TOORequestSchema()
-    _arg_schema = TOOArgSchema()
+    _get_schema = TOOArgSchema()
 
     def __init__(self, **kwargs):
         self.status = JobStatus()
@@ -121,7 +121,7 @@ class TOORequests(ACROSSBase, ACROSSUser):
     _mission = MISSION
     _api_name = "TOORequests"
     _schema = TOORequestsSchema()
-    _arg_schema = TOORequestsArgSchema()
+    _get_schema = TOORequestsArgSchema()
 
     def __init__(self, **kwargs):
         self.status = JobStatus()
