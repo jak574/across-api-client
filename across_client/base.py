@@ -113,6 +113,9 @@ class ACROSSBase:
                     return True
                 else:
                     return False
+            if req.status_code == 422:
+                print(req.text)
+                return False
             # Raise an exception if the HTML response was not 200
             req.raise_for_status()
         return False
@@ -138,11 +141,14 @@ class ACROSSBase:
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                self.parameters = self._schema.loads(req.text).parameters  # type: ignore
+                self.__init__(**self._schema.loads(req.text).__dict__)  # type: ignore
                 if self.status.status == "Accepted":
                     return True
                 else:
                     return False
+            if req.status_code == 422:
+                print(req.text)
+                return False
             # Raise an exception if the HTML response was not 200
             req.raise_for_status()
         return False

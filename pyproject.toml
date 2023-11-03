@@ -107,7 +107,8 @@ dependencies = [ # Optional
   "requests",
   "marshmallow",
   "astropy",
-  "requests"
+  "requests",
+  "python-dateutil"
 ]
 
 # List additional groups of dependencies here (e.g. development
