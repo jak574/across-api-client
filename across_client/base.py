@@ -8,7 +8,7 @@ from .jobstatus import JobStatus
 
 class ACROSSBase:
     """
-    Mixin for ACROSS API Classes including common methods for all API classes.
+    Base class for ACROSS API Classes including common methods for all API classes.
     """
 
     # Type hints

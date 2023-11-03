@@ -1,4 +1,4 @@
-from across.resolve import ACROSSResolveName
+from ..resolve import ACROSSResolveName
 from ..base import ACROSSBase
 from ..coords import CoordSchema
 from ..user import ACROSSUser, UserArgSchema
