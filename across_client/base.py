@@ -153,6 +153,39 @@ class ACROSSBase:
             req.raise_for_status()
         return False
 
+    def post(self) -> bool:
+        """
+        Perform a 'PUT' submission to ACROSS API. Used for pushing/replacing
+        information.
+
+        Returns
+        -------
+        bool
+            Was the get successful?
+
+        Raises
+        ------
+        HTTPError
+            Raised if GET doesn't return a 200 response.
+        """
+        if self.validate():
+            req = requests.post(
+                self.api_url, params=self.arguments, json=self._put_schema.dump(self)
+            )
+            if req.status_code == 200:
+                # Parse, validate and record values from returned API JSON
+                self.__init__(**self._schema.loads(req.text).__dict__)  # type: ignore
+                if self.status.status == "Accepted":
+                    return True
+                else:
+                    return False
+            if req.status_code == 422:
+                print(req.text)
+                return False
+            # Raise an exception if the HTML response was not 200
+            req.raise_for_status()
+        return False
+
     def validate(self) -> bool:
         """"""
         """Perform validation of arguments against schema, record those errors
