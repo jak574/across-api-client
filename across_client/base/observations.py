@@ -1,14 +1,13 @@
 from datetime import datetime
-from .schema import SwiftObservationsGetSchema, SwiftObservationsSchema
-from ..base.base import ACROSSBase
-from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobStatus
+from across_client.swift.schema import SwiftObservationsGetSchema, SwiftObservationsPutSchema, SwiftObservationsSchema
+from .base import ACROSSBase
+from .daterange import ACROSSDateRange
+from .schema import JobStatus
 from ..across.resolve import ACROSSResolveName
-from ..base.user import ACROSSUser
-from .constants import MISSION
+from ..swift.constants import MISSION
 
 
-class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+class SwiftObservations(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
     # Type hints
     ra: float
     dec: float
@@ -20,7 +19,7 @@ class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRan
     # API definitions
     _mission = MISSION
     _schema = SwiftObservationsSchema
-    _put_schema = SwiftObservationsGetSchema
+    _put_schema = SwiftObservationsPutSchema
     _get_schema = SwiftObservationsGetSchema
     _api_name = "Observations"
 

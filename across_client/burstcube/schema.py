@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from ..schema import (
+from ..base.schema import (
     BaseSchema,
     JobStatus,
     OptionalCoordSchema,

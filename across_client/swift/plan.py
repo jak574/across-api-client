@@ -1,11 +1,10 @@
 from datetime import datetime
 from .schema import SwiftPlanGetSchema, SwiftPlanSchema
-from ..base import ACROSSBase
-from ..schema import CoordSchema
-from ..daterange import ACROSSDateRange
-from ..schema import JobStatus, PlanGetSchemaBase, PlanSchemaBase, PlanEntryBase
-from ..resolve import ACROSSResolveName
-from ..user import ACROSSUser, UserArgSchema
+from ..base.base import ACROSSBase
+from ..base.daterange import ACROSSDateRange
+from ..base.schema import JobStatus
+from ..across.resolve import ACROSSResolveName
+from ..base.user import ACROSSUser
 from .constants import MISSION
 
 
@@ -29,6 +28,7 @@ class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         self.status = JobStatus()
         self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
+
 
 # Alias
 Plan = SwiftPlan

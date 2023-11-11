@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from ..schema import (
+from ..base.schema import (
     PlanEntryBase,
     PlanGetSchemaBase,
     PlanSchemaBase,

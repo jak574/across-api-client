@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from across_client.burstcube.schema import (
     BurstCubeTOOGetSchema,
     BurstCubeTOOPostSchema,
@@ -9,11 +8,11 @@ from across_client.burstcube.schema import (
     BurstCubeTOOSchema,
 )
 
-from ..base import ACROSSBase
-from ..daterange import ACROSSDateRange, DateTime
-from ..schema import JobStatus
-from ..resolve import ACROSSResolveName
-from ..user import ACROSSUser, UserArgSchema
+from ..base.base import ACROSSBase
+from ..base.daterange import ACROSSDateRange
+from ..base.schema import JobStatus
+from ..across.resolve import ACROSSResolveName
+from ..base.user import ACROSSUser
 from .constants import MISSION
 
 
@@ -24,10 +23,11 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     trigger_time: datetime
     ra: float
     dec: float
-    begin: float
-    end: float
+    begin: datetime
+    end: datetime
     exposure: float
     offset: float
+    status: JobStatus
 
     # API definitions
 
