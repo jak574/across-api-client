@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from ..across.resolve import ACROSSResolveName
-from ..base.base import ACROSSBase
+from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
 from ..base.schema import JobStatus
 from ..base.user import ACROSSUser
