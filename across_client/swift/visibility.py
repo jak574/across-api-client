@@ -12,7 +12,7 @@ class SwiftVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
     dec: float
     begin: datetime
     end: datetime
-    hires: bool
+    hires: bool = True
     entries: list
 
     # API definitions
