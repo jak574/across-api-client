@@ -1,6 +1,6 @@
 from typing import Optional
-from .base import ACROSSBase
-from .schema import JobStatus, ResolveGetSchema, ResolveSchema
+from .base import ACROSSBase  # type: ignore
+from .schema import JobStatus, ResolveGetSchema, ResolveSchema  # type: ignore
 
 
 class Resolve(ACROSSBase):

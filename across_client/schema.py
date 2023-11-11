@@ -6,7 +6,9 @@ import numpy as np
 from astropy.constants import c, h  # type: ignore
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 from pydantic_core import Url
-from .functions import convert_to_dt
+from .functions import convert_to_dt  # type: ignore
+from .coords import coord_convert  # type: ignore
+from astropy.coordinates import SkyCoord  # type: ignore
 
 
 class BaseSchema(BaseModel):
@@ -21,10 +23,21 @@ class BaseSchema(BaseModel):
 
 
 class CoordSchema(BaseSchema):
-    """Schema that defines basic RA/Dec"""
+    """Schema that RA/Dec"""
 
     ra: float = Field(ge=0, lt=360)
     dec: float = Field(ge=-90, le=90)
+
+    @model_validator(mode="before")
+    @classmethod
+    def convert_coord(cls, data: Any) -> Any:
+        for key in data.keys():
+            data[key] = coord_convert(data[key])
+        return data
+
+    @property
+    def skycoord(self) -> SkyCoord:
+        return SkyCoord(self.ra, self.dec, unit="deg")
 
 
 class PositionSchema(CoordSchema):
@@ -37,12 +50,25 @@ class OptionalCoordSchema(BaseSchema):
     ra: Optional[float] = Field(ge=0, lt=360, default=None)
     dec: Optional[float] = Field(ge=-90, le=90, default=None)
 
+    @model_validator(mode="before")
+    @classmethod
+    def check_dates(cls, data: Any) -> Any:
+        for key in data.keys():
+            data[key] = coord_convert(data[key])
+        return data
+
     @model_validator(mode="after")
     @classmethod
     def check_ra_dec(cls, data: Any) -> Any:
         if data.ra is None or data.dec is None:
             assert data.ra == data.dec, "RA/Dec should both be set, or both not set"
         return data
+
+    @property
+    def skycoord(self) -> Optional[SkyCoord]:
+        if self.ra is not None and self.dec is not None:
+            return SkyCoord(self.ra, self.dec, unit="deg")
+        return None
 
 
 class DateRangeSchema(BaseSchema):

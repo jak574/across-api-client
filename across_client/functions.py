@@ -3,9 +3,9 @@ import warnings
 from datetime import date, datetime, timedelta, timezone
 from typing import Optional, Union
 
-import astropy.units as u
+import astropy.units as u  # type: ignore
 import numpy as np
-from astropy.time import Time, TimeDelta
+from astropy.time import Time, TimeDelta  # type: ignore
 from astropy.units import Quantity
 from dateutil import parser
 
@@ -81,7 +81,7 @@ def convert_timedelta(
         divisor = 1.0
     if type(length) is Quantity:
         length = length.to(u.day).value
-    elif type(length) == timedelta:
+    elif type(length) is timedelta:
         length = length.total_seconds() / divisor
     elif type(length) is TimeDelta:
         length = length.to_datetime().total_seconds() / divisor  # type: ignore
@@ -113,7 +113,7 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
     TypeError
         Raised if incorrect format is given for conversion.
     """
-    if type(value) == str or type(value) == np.str_:
+    if type(value) is str or type(value) is np.str_:
         if re.match(_datetime_regex, value):
             # Remove the rogue T in 2023-10-17T00:00:00 style strings
             value = value.replace("T", " ")
@@ -137,9 +137,9 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
             raise ValueError(
                 "Date/time given as string should 'YYYY-MM-DD HH:MM:SS' or ISO8601 format."
             )
-    elif type(value) == date:
+    elif type(value) is date:
         dtvalue = datetime.strptime(f"{value} 00:00:00", "%Y-%m-%d %H:%M:%S")
-    elif type(value) == datetime:
+    elif type(value) is datetime:
         if value.tzinfo is not None:
             # Strip out timezone info and convert to UTC
             value = value.astimezone(timezone.utc).replace(tzinfo=None)

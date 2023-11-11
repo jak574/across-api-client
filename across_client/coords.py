@@ -1,8 +1,7 @@
 from typing import Optional, Union
 
-from astropy.coordinates import Latitude, Longitude
-from astropy.units import Quantity, deg
-from marshmallow import Schema, ValidationError, fields, validates_schema
+from astropy.coordinates import Latitude, Longitude  # type: ignore
+from astropy.units import Quantity, deg  # type: ignore
 
 
 def coord_convert(
@@ -29,36 +28,3 @@ def coord_convert(
         return coord.value
     # Universal translator
     return float(coord)
-
-
-class Coordinate(fields.Float):
-    def _serialize(self, value, attr, obj, **kwargs) -> Optional[float]:
-        return coord_convert(value)
-
-
-class CoordSchema(Schema):
-    ra = Coordinate()
-    dec = Coordinate()
-
-    @validates_schema
-    def coord_check(self, data, **kwargs):
-        """Validate RA/Dec coordinates are within valid ranges.
-
-        Parameters
-        ----------
-        data : dict
-            Schema data
-
-        Raises
-        ------
-        ValidationError
-            Returned if RA/Dec coordinates are not within valid ranges
-        """
-        if "ra" in data and "dec" in data:
-            ra = coord_convert(data["ra"])
-            dec = coord_convert(data["dec"])
-            if ra is not None and dec is not None:
-                if ra >= 0 and ra <= 360 and dec >= -90 and dec <= 90:
-                    pass
-                else:
-                    raise ValidationError("RA/Dec not in valid range.")

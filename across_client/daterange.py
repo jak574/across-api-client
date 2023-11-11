@@ -1,23 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional, Union
-
-from marshmallow import Schema, fields
-
-from .functions import convert_timedelta, convert_to_dt
-
-
-class DateTime(fields.DateTime):
-    """Version of DateTime that accepts multiple formats"""
-
-    def _serialize(self, value, attr, obj, **kwargs) -> Optional[str]:
-        if value is None:
-            return None
-        return convert_to_dt(value).strftime("%Y-%m-%d %H:%M:%S")
-
-
-class DateRangeSchema(Schema):
-    begin = DateTime(format="%Y-%m-%d %H:%M:%S", required=False, allow_none=True)
-    end = DateTime(format="%Y-%m-%d %H:%M:%S", required=False, allow_none=True)
+from .functions import convert_timedelta, convert_to_dt  # type: ignore
 
 
 class ACROSSDateRange:

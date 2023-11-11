@@ -1,83 +1,14 @@
-from dataclasses import dataclass
 from datetime import datetime
-
-from marshmallow import Schema, fields, post_load
-
+from across_client.swift.schema import SwiftObservationsGetSchema, SwiftObservationsPutSchema, SwiftObservationsSchema
 from ..base import ACROSSBase
-from ..coords import CoordSchema
-from ..daterange import ACROSSDateRange, DateTime
-from ..jobstatus import JobStatus, JobStatusSchema
+from ..daterange import ACROSSDateRange
+from ..schema import JobStatus
 from ..resolve import ACROSSResolveName
-from ..user import ACROSSUser, UserArgSchema
+from ..user import ACROSSUser
 from .constants import MISSION
 
 
-class ObsEntrySchema(CoordSchema):
-    roll = fields.Float()
-    begin = fields.DateTime()
-    end = fields.DateTime()
-    slew = fields.Int()
-    targname = fields.Str()
-    targetid = fields.Int()
-    segment = fields.Int()
-    obsid = fields.Str()
-    exposure = fields.Int()
-    xrtmode = fields.Int()
-    uvotmode = fields.Int()
-    batmode = fields.Int()
-    merit = fields.Int()
-
-    @post_load
-    def create_obsentry(self, data, **kwargs):
-        return ObsEntry(**data)
-
-
-@dataclass
-class ObsEntry(ACROSSBase):
-    _schema = ObsEntrySchema()
-    _get_schema = ObsEntrySchema()
-    _put_schema = ObsEntrySchema()
-    begin: datetime
-    end: datetime
-    slew: int
-    ra: float
-    dec: float
-    roll: float
-    targname: str
-    targetid: int
-    segment: int
-    obsid: str
-    exposure: int
-    xrtmode: int
-    uvotmode: int
-    batmode: int
-    merit: int
-
-
-class ObservationsArgSchema(UserArgSchema, CoordSchema):
-    begin = DateTime(allow_none=True)
-    end = DateTime(allow_none=True)
-    radius = fields.Float(allow_none=True)
-    obsid = fields.Int(allow_none=True)
-    targetid = fields.Int(allow_none=True)
-
-
-class ObservationsEntriesSchema(Schema):
-    entries = fields.List(
-        cls_or_instance=fields.Nested(ObsEntrySchema), required=False, allow_none=True
-    )
-
-
-class ObservationsSchema(ObservationsEntriesSchema):
-
-    status = fields.Nested(JobStatusSchema)
-
-    @post_load
-    def create_observations(self, data, **kwargs):
-        return Observations(**data)
-
-
-class Observations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     # Type hints
     ra: float
     dec: float
@@ -88,12 +19,16 @@ class Observations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
     # API definitions
     _mission = MISSION
-    _schema = ObservationsSchema()
-    _put_schema = ObservationsEntriesSchema()
-    _get_schema = ObservationsArgSchema()
+    _schema = SwiftObservationsSchema
+    _put_schema = SwiftObservationsPutSchema
+    _get_schema = SwiftObservationsGetSchema
     _api_name = "Observations"
 
     def __init__(self, **kwargs):
         self.status = JobStatus()
         self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
+
+
+# Alias
+Observations = SwiftObservations
