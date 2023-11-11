@@ -1,4 +1,11 @@
 from datetime import datetime
+
+from ..across.resolve import ACROSSResolveName
+from ..base.base import ACROSSBase
+from ..base.daterange import ACROSSDateRange
+from ..base.schema import JobStatus
+from ..base.user import ACROSSUser
+from .constants import MISSION
 from .schema import (
     BurstCubeTOOGetSchema,
     BurstCubeTOOPostSchema,
@@ -7,13 +14,6 @@ from .schema import (
     BurstCubeTOORequestsSchema,
     BurstCubeTOOSchema,
 )
-
-from ..base.base import ACROSSBase
-from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobStatus
-from ..across.resolve import ACROSSResolveName
-from ..base.user import ACROSSUser
-from .constants import MISSION
 
 
 class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):

@@ -1,12 +1,12 @@
 from typing import Type
 from urllib.parse import urlencode
-from pydantic import ValidationError
 
 import requests
+from pydantic import ValidationError
 
 from ..constants import API_URL
 from ..functions import tablefy
-from .schema import JobStatus, BaseSchema
+from .schema import BaseSchema, JobStatus
 
 
 class ACROSSBase:
@@ -153,7 +153,7 @@ class ACROSSBase:
             req = requests.put(
                 self.api_url,
                 params=self.arguments,
-                json=self._put_schema.model_validate(self).model_dump()
+                json=self._put_schema.model_validate(self).model_dump(),
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
@@ -186,7 +186,9 @@ class ACROSSBase:
         """
         if self.validate_post():
             req = requests.post(
-                self.api_url, params=self.arguments, json=self._post_schema.model_validate(self).model_dump()
+                self.api_url,
+                params=self.arguments,
+                json=self._post_schema.model_validate(self).model_dump(),
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
@@ -226,13 +228,13 @@ class ACROSSBase:
         bool
             Is it validated? True | False
         """
-#        try:
+        #        try:
         self._put_schema.model_validate(self.__dict__)
-#        except ValidationError as e:
-#            for e in e.errors():
-#                if e["type"] == "missing":
-#                    self.status.error(f"Required argument missing: {e['loc'][0]}")
-#            return False
+        #        except ValidationError as e:
+        #            for e in e.errors():
+        #                if e["type"] == "missing":
+        #                    self.status.error(f"Required argument missing: {e['loc'][0]}")
+        #            return False
         return True
 
     def validate_post(self) -> bool:
@@ -243,13 +245,13 @@ class ACROSSBase:
         bool
             Is it validated? True | False
         """
-#        try:
+        #        try:
         self._post_schema.model_validate(self.__dict__)
-#        except ValidationError as e:
-#            for e in e.errors():
-#                if e["type"] == "missing":
-#                    self.status.error(f"Required argument missing: {e['loc'][0]}")
-#            return False
+        #        except ValidationError as e:
+        #            for e in e.errors():
+        #                if e["type"] == "missing":
+        #                    self.status.error(f"Required argument missing: {e['loc'][0]}")
+        #            return False
         return True
 
     def validate_del(self) -> bool:
@@ -260,13 +262,13 @@ class ACROSSBase:
         bool
             Is it validated? True | False
         """
-#        try:
+        #        try:
         self._del_schema.model_validate(self.__dict__)
-#        except ValidationError as e:
-#            for e in e.errors():
-#                if e["type"] == "missing":
-#                    self.status.error(f"Required argument missing: {e['loc'][0]}")
-#            return False
+        #        except ValidationError as e:
+        #            for e in e.errors():
+        #                if e["type"] == "missing":
+        #                    self.status.error(f"Required argument missing: {e['loc'][0]}")
+        #            return False
         return True
 
     @property

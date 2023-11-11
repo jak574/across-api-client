@@ -1,10 +1,11 @@
 from datetime import datetime
-from .schema import SwiftObservationsGetSchema, SwiftObservationsSchema
+
+from ..across.resolve import ACROSSResolveName
 from ..base.base import ACROSSBase
 from ..base.daterange import ACROSSDateRange
 from ..base.schema import JobStatus
-from ..across.resolve import ACROSSResolveName
 from .constants import MISSION
+from .schema import SwiftObservationsGetSchema, SwiftObservationsSchema
 
 
 class SwiftObservations(ACROSSBase, ACROSSResolveName, ACROSSDateRange):

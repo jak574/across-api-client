@@ -1,11 +1,12 @@
 from datetime import datetime
-from .schema import SwiftPlanGetSchema, SwiftPlanSchema
+
+from ..across.resolve import ACROSSResolveName
 from ..base.base import ACROSSBase
 from ..base.daterange import ACROSSDateRange
 from ..base.schema import JobStatus
-from ..across.resolve import ACROSSResolveName
 from ..base.user import ACROSSUser
 from .constants import MISSION
+from .schema import SwiftPlanGetSchema, SwiftPlanSchema
 
 
 class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):

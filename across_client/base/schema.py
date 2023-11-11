@@ -4,11 +4,12 @@ from typing import Any, List, Optional, Union
 import astropy.units as u  # type: ignore
 import numpy as np
 from astropy.constants import c, h  # type: ignore
+from astropy.coordinates import SkyCoord  # type: ignore
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 from pydantic_core import Url
+
 from ..functions import convert_to_dt  # type: ignore
 from .coords import coord_convert  # type: ignore
-from astropy.coordinates import SkyCoord  # type: ignore
 
 
 class BaseSchema(BaseModel):
@@ -33,7 +34,7 @@ class CoordSchema(BaseSchema):
     def convert_coord(cls, data: Any) -> Any:
         if type(data) is dict:
             for key in data.keys():
-                if key == 'ra' or key == 'dec':
+                if key == "ra" or key == "dec":
                     data[key] = coord_convert(data[key])
         else:
             data.ra = coord_convert(data.ra)
