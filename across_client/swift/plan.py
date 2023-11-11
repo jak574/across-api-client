@@ -6,7 +6,12 @@ from ..base.daterange import ACROSSDateRange
 from ..base.schema import JobStatus
 from ..base.user import ACROSSUser
 from .constants import MISSION
-from .schema import SwiftPlanGetSchema, SwiftPlanSchema
+from .schema import (
+    SwiftPlanGetSchema,
+    SwiftPlanPutSchema,
+    SwiftPlanSchema,
+    SwiftPlanEntry,
+)
 
 
 class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
@@ -21,7 +26,7 @@ class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     # API definitions
     _mission = MISSION
     _schema = SwiftPlanSchema
-    _put_schema = SwiftPlanGetSchema
+    _put_schema = SwiftPlanPutSchema
     _get_schema = SwiftPlanGetSchema
     _api_name = "Plan"
 
@@ -33,3 +38,4 @@ class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
 # Alias
 Plan = SwiftPlan
+PlanEntry = SwiftPlanEntry

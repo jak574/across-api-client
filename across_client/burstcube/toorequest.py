@@ -39,6 +39,8 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _get_schema = BurstCubeTOOGetSchema
 
     def __init__(self, **kwargs):
+        self.exposure = 200
+        self.offset = -50
         self.status = JobStatus()
         [setattr(self, k, a) for k, a in kwargs.items()]
 

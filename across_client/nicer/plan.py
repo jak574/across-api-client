@@ -6,7 +6,12 @@ from ..base.daterange import ACROSSDateRange
 from ..base.schema import JobStatus
 from ..base.user import ACROSSUser
 from .constants import MISSION
-from .schema import NICERPlanGetSchema, NICERPlanSchema
+from .schema import (
+    NICERPlanGetSchema,
+    NICERPlanPutSchema,
+    NICERPlanSchema,
+    NICERPlanEntry,
+)
 
 
 class NICERPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
@@ -22,7 +27,7 @@ class NICERPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _mission = MISSION
     _schema = NICERPlanSchema
     _put_schema = NICERPlanGetSchema
-    _get_schema = NICERPlanGetSchema
+    _get_schema = NICERPlanPutSchema
     _api_name = "Plan"
 
     def __init__(self, **kwargs):
@@ -33,3 +38,4 @@ class NICERPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
 # Alias
 Plan = NICERPlan
+PlanEntry = NICERPlanEntry

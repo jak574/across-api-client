@@ -7,6 +7,7 @@ from ..base.schema import (
     PointBase,
     PointingGetSchemaBase,
     PointingSchemaBase,
+    UserSchema,
 )
 
 
@@ -22,6 +23,10 @@ class SwiftPlanEntry(PlanEntryBase):
 
 
 class SwiftPlanGetSchema(PlanGetSchemaBase):
+    pass
+
+
+class SwiftPlanPutSchema(PlanGetSchemaBase, UserSchema):
     pass
 
 
