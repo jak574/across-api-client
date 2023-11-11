@@ -42,6 +42,11 @@ class ACROSSBase:
         str
             URL for API call
         """
+        argdict = self.arguments
+        # If arguments has `id` in it, then put this in the path
+        if "id" in argdict.keys() and argdict["id"] is not None:
+            id = argdict.pop("id")
+            return f"{API_URL}{self._mission}/{self._api_name}/{id}"
         return f"{API_URL}{self._mission}/{self._api_name}"
 
     @property
@@ -54,8 +59,11 @@ class ACROSSBase:
         str
             URL for GET API request
         """
-        api_params = urlencode(self.arguments)
-        return f"{self.api_url}?{api_params}"
+        argdict = self.arguments
+        # If arguments has `id` in it, then put this in the path
+        if "id" in argdict.keys() and argdict["id"] is not None:
+            _ = argdict.pop("id")
+        return f"{self.api_url}?{urlencode(argdict)}"
 
     @property
     def arguments(self) -> dict:
@@ -104,7 +112,7 @@ class ACROSSBase:
             Dictionary of class parameters
         """
         for k, v in self._schema(**params).model_dump().items():
-            if v is not None:
+            if hasattr(self, k) and v is not None:
                 setattr(self, k, v)
 
     def get(self) -> bool:

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
@@ -21,8 +22,8 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     trigger_instrument: str
     trigger_id: str
     trigger_time: datetime
-    ra: float
-    dec: float
+    ra: Optional[float]
+    dec: Optional[float]
     begin: datetime
     end: datetime
     exposure: float
@@ -62,3 +63,7 @@ class TOORequests(ACROSSBase, ACROSSUser):
         self.status = JobStatus()
         self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
+
+
+# Alias
+BurstCubeTOO = TOO
