@@ -58,9 +58,14 @@ class OptionalCoordSchema(BaseSchema):
 
     @model_validator(mode="before")
     @classmethod
-    def check_dates(cls, data: Any) -> Any:
-        for key in data.keys():
-            data[key] = coord_convert(data[key])
+    def coord_convert(cls, data: Any) -> Any:
+        if type(data) is dict:
+            for key in data.keys():
+                if key == "ra" or key == "dec":
+                    data[key] = coord_convert(data[key])
+        else:
+            data.ra = coord_convert(data.ra)
+            data.dec = coord_convert(data.dec)
         return data
 
     @model_validator(mode="after")
