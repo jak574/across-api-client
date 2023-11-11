@@ -1,69 +1,20 @@
-from ..resolve import ACROSSResolveName
-from ..base import ACROSSBase
-from ..coords import CoordSchema
-from ..user import ACROSSUser, UserArgSchema
-from .constants import MISSION
-from ..daterange import ACROSSDateRange
-from ..jobstatus import JobStatus, JobStatusSchema
-from marshmallow import fields, post_load, Schema
-from dataclasses import dataclass
 from datetime import datetime
-from ..daterange import DateTime
+
+from ..across.resolve import ACROSSResolveName
+from ..base.common import ACROSSBase
+from ..base.daterange import ACROSSDateRange
+from ..base.schema import JobStatus
+from ..base.user import ACROSSUser
+from .constants import MISSION
+from .schema import (
+    NICERPlanGetSchema,
+    NICERPlanPutSchema,
+    NICERPlanSchema,
+    NICERPlanEntry,
+)
 
 
-class PlanEntrySchema(CoordSchema):
-    begin = DateTime(allow_none=True)
-    end = DateTime(allow_none=True)
-    targname = fields.Str()
-    targetid = fields.Int()
-    obsid = fields.Int()
-    exposure = fields.Int()
-    mode = fields.Str()
-
-    @post_load
-    def create_planentry(self, data, **kwargs):
-        return PlanEntry(**data)
-
-
-@dataclass
-class PlanEntry(ACROSSBase):
-    _schema = PlanEntrySchema()
-    _get_schema = PlanEntrySchema()
-    ra: float
-    dec: float
-    begin: datetime
-    end: datetime
-    targname: str
-    targetid: int
-    obsid: int
-    exposure: int
-    mode: str
-
-
-class PlanArgSchema(UserArgSchema, CoordSchema):
-    begin = DateTime(allow_none=True)
-    end = DateTime(allow_none=True)
-    radius = fields.Float(allow_none=True)
-    obsid = fields.Int(allow_none=True)
-    targetid = fields.Int(allow_none=True)
-
-
-class PlanEntriesSchema(Schema):
-    entries = fields.List(
-        cls_or_instance=fields.Nested(PlanEntrySchema), required=False, allow_none=True
-    )
-
-
-class PlanSchema(PlanEntriesSchema):
-
-    status = fields.Nested(JobStatusSchema)
-
-    @post_load
-    def create_plan(self, data, **kwargs):
-        return Plan(**data)
-
-
-class Plan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+class NICERPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     # Type hints
     ra: float
     dec: float
@@ -74,12 +25,17 @@ class Plan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
     # API definitions
     _mission = MISSION
-    _schema = PlanSchema()
-    _put_schema = PlanEntriesSchema()
-    _get_schema = PlanArgSchema()
+    _schema = NICERPlanSchema
+    _put_schema = NICERPlanPutSchema
+    _get_schema = NICERPlanGetSchema
     _api_name = "Plan"
 
     def __init__(self, **kwargs):
         self.status = JobStatus()
         self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
+
+
+# Alias
+Plan = NICERPlan
+PlanEntry = NICERPlanEntry
