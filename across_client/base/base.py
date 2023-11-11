@@ -66,9 +66,9 @@ class ACROSSBase:
             Dictionary of arguments with values
         """
         return {
-            k: v
-            for k, v in self._get_schema.model_validate(self).__dict__.items()
-            if v is not None
+            k: getattr(self, k)
+            for k in self._get_schema.model_fields.keys()
+            if hasattr(self, k) and getattr(self, k) is not None
         }
 
     @property
@@ -267,7 +267,6 @@ class ACROSSBase:
                     self.status.error(f"Required argument missing: {e['loc'][0]}")
             return False
         return True
-
 
     @property
     def _table(self) -> tuple:
