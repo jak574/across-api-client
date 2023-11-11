@@ -20,7 +20,6 @@ class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     dec: float
     begin: datetime
     end: datetime
-    hires: bool
     entries: list
 
     # API definitions

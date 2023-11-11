@@ -4,23 +4,28 @@ from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
 from ..base.schema import JobStatus
+from ..base.user import ACROSSUser
 from .constants import MISSION
-from .schema import SwiftObservationsGetSchema, SwiftObservationsSchema
+from .schema import (
+    SwiftObservationsGetSchema,
+    SwiftObservationsPutSchema,
+    SwiftObservationsSchema,
+    SwiftObsEntry,
+)
 
 
-class SwiftObservations(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
+class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     # Type hints
     ra: float
     dec: float
     begin: datetime
     end: datetime
-    hires: bool
     entries: list
 
     # API definitions
     _mission = MISSION
     _schema = SwiftObservationsSchema
-    _put_schema = SwiftObservationsGetSchema
+    _put_schema = SwiftObservationsPutSchema
     _get_schema = SwiftObservationsGetSchema
     _api_name = "Observations"
 
@@ -32,3 +37,4 @@ class SwiftObservations(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
 
 # Alias
 Observations = SwiftObservations
+ObsEntry = SwiftObsEntry

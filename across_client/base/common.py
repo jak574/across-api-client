@@ -103,7 +103,7 @@ class ACROSSBase:
         params : dict
             Dictionary of class parameters
         """
-        for k, v in self._schema(params).dump().items():
+        for k, v in self._schema(**params).model_dump().items():
             if v is not None:
                 setattr(self, k, v)
 

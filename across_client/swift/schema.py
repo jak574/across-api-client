@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from ..base.schema import (
+    BaseSchema,
     PlanEntryBase,
     PlanGetSchemaBase,
     PlanSchemaBase,
@@ -26,7 +27,8 @@ class SwiftPlanGetSchema(PlanGetSchemaBase):
     pass
 
 
-class SwiftPlanPutSchema(PlanGetSchemaBase, UserSchema):
+class SwiftPlanPutSchema(UserSchema):
+    entries: List[SwiftPlanEntry]
     pass
 
 
@@ -63,9 +65,10 @@ class SwiftObservationsGetSchema(PlanGetSchemaBase):
     pass
 
 
-class SwiftObservationsPutSchema(PlanGetSchemaBase):
+class SwiftObservationsPutSchema(BaseSchema):
+    entries: List[SwiftObsEntry]
     pass
 
 
 class SwiftObservationsSchema(PlanSchemaBase):
-    pass
+    entries: List[SwiftObsEntry]  # type: ignore

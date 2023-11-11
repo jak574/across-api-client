@@ -26,8 +26,8 @@ class NICERPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     # API definitions
     _mission = MISSION
     _schema = NICERPlanSchema
-    _put_schema = NICERPlanGetSchema
-    _get_schema = NICERPlanPutSchema
+    _put_schema = NICERPlanPutSchema
+    _get_schema = NICERPlanGetSchema
     _api_name = "Plan"
 
     def __init__(self, **kwargs):
