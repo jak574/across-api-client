@@ -1,5 +1,5 @@
 from datetime import datetime
-from across_client.burstcube.schema import (
+from .schema import (
     BurstCubeTOOGetSchema,
     BurstCubeTOOPostSchema,
     BurstCubeTOOPutSchema,

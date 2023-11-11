@@ -105,9 +105,8 @@ classifiers = [  # Optional
 # https://packaging.python.org/discussions/install-requires-vs-requirements/
 dependencies = [ # Optional
   "requests",
-  "marshmallow",
+  "pydantic",
   "astropy",
-  "requests",
   "python-dateutil"
 ]
 
