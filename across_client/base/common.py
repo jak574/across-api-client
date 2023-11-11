@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from ..constants import API_URL
 from ..functions import tablefy
 from .schema import BaseSchema, JobStatus
+import json
 
 
 class ACROSSBase:
@@ -66,11 +67,15 @@ class ACROSSBase:
         dict
             Dictionary of arguments with values
         """
-        return {
-            k: getattr(self, k)
-            for k in self._get_schema.model_fields.keys()
-            if hasattr(self, k) and getattr(self, k) is not None
-        }
+        # Send username/api_key if set
+        if hasattr(self, "username") and hasattr(self, "api_key"):
+            argdict = {"username": self.username, "api_key": self.api_key}
+
+        for k in self._get_schema.model_fields.keys():
+            if hasattr(self, k) and getattr(self, k) is not None:
+                argdict[k] = getattr(self, k)
+
+        return argdict
 
     @property
     def parameters(self) -> dict:
@@ -98,7 +103,7 @@ class ACROSSBase:
         params : dict
             Dictionary of class parameters
         """
-        for k, v in self._schema.model_dump(**params).items():
+        for k, v in self._schema(params).dump().items():
             if v is not None:
                 setattr(self, k, v)
 
@@ -153,11 +158,14 @@ class ACROSSBase:
             req = requests.put(
                 self.api_url,
                 params=self.arguments,
-                json=self._put_schema.model_validate(self).model_dump(),
+                json=json.loads(
+                    self._put_schema.model_validate(self).model_dump_json()
+                ),
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                self.__init__(**self._schema.model_validate(**req.json()).__dict__)  # type: ignore
+                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                    setattr(self, k, v)
                 if self.status.status == "Accepted":
                     return True
                 else:
@@ -188,11 +196,14 @@ class ACROSSBase:
             req = requests.post(
                 self.api_url,
                 params=self.arguments,
-                json=self._post_schema.model_validate(self).model_dump(),
+                json=json.loads(
+                    self._post_schema.model_validate(self).model_dump_json()
+                ),
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                self.__init__(**self._schema.loads(req.text).__dict__)  # type: ignore
+                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                    setattr(self, k, v)
                 if self.status.status == "Accepted":
                     return True
                 else:
