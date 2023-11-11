@@ -31,8 +31,13 @@ class CoordSchema(BaseSchema):
     @model_validator(mode="before")
     @classmethod
     def convert_coord(cls, data: Any) -> Any:
-        for key in data.keys():
-            data[key] = coord_convert(data[key])
+        if type(data) is dict:
+            for key in data.keys():
+                if key == 'ra' or key == 'dec':
+                    data[key] = coord_convert(data[key])
+        else:
+            data.ra = coord_convert(data.ra)
+            data.dec = coord_convert(data.dec)
         return data
 
     @property
