@@ -38,6 +38,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _put_schema = BurstCubeTOOPutSchema
     _post_schema = BurstCubeTOOPostSchema
     _get_schema = BurstCubeTOOGetSchema
+    _del_schema = BurstCubeTOOGetSchema
 
     def __init__(self, **kwargs):
         self.exposure = 200
