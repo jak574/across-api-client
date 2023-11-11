@@ -1,7 +1,8 @@
-from marshmallow import Schema, fields, validates_schema, ValidationError
-from astropy.coordinates import Longitude, Latitude
+from typing import Optional, Union
+
+from astropy.coordinates import Latitude, Longitude
 from astropy.units import Quantity, deg
-from typing import Union, Optional
+from marshmallow import Schema, ValidationError, fields, validates_schema
 
 
 def coord_convert(

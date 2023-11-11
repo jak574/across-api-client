@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
-from marshmallow import Schema, fields, validates_schema, ValidationError
+
+from marshmallow import Schema, ValidationError, fields, validates_schema
 
 
 class UserArgSchema(Schema):

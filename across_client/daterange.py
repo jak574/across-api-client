@@ -1,7 +1,9 @@
-from marshmallow import Schema, fields
-from typing import Optional, Union
 from datetime import datetime, timedelta
-from .functions import convert_to_dt, convert_timedelta
+from typing import Optional, Union
+
+from marshmallow import Schema, fields
+
+from .functions import convert_timedelta, convert_to_dt
 
 
 class DateTime(fields.DateTime):

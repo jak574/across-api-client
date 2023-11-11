@@ -1,43 +1,26 @@
-from .base import ACROSSBase
-from .user import ACROSSUser
 from typing import Optional
-from .jobstatus import JobStatus, JobStatusSchema
-from .user import UserArgSchema
-from marshmallow import fields, Schema, post_load
+from .base import ACROSSBase
+from .schema import JobStatus, ResolveGetSchema, ResolveSchema
 
 
-class ResolveArgSchema(UserArgSchema):
-    name = fields.Str(required=True)
-
-
-class ResolveSchema(Schema):
-    ra = fields.Float(allow_none=True)
-    dec = fields.Float(allow_none=True)
-    resolver = fields.Str(allow_none=True)
-    status = fields.Nested(JobStatusSchema)
-
-    @post_load
-    def resolve(self, data, **kwargs):
-        return Resolve(**data)
-
-
-class Resolve(ACROSSBase, ACROSSUser):
+class Resolve(ACROSSBase):
     # Type hints
-    name: Optional[str]
-    ra: Optional[float]
-    dec: Optional[float]
-    resolver: Optional[str]
+    name: Optional[str] = None
+    ra: Optional[float] = None
+    dec: Optional[float] = None
+    resolver: Optional[str] = None
     status: JobStatus
 
     _mission = "ACROSS"
     _api_name = "Resolve"
-    _schema = ResolveSchema()
-    _get_schema = ResolveArgSchema()
+    _schema = ResolveSchema
+    _get_schema = ResolveGetSchema
 
     def __init__(self, name: Optional[str] = None, **kwargs):
         self.status = JobStatus()
         self.name = name
-        [setattr(self, k, a) for k, a in kwargs.items()]
+        for k, a in kwargs.items():
+            setattr(self, k, a)
 
 
 class ACROSSResolveName:

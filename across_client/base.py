@@ -1,9 +1,11 @@
 from urllib.parse import urlencode
+from pydantic import ValidationError
+
 import requests
+
 from .constants import API_URL
 from .functions import tablefy
-from marshmallow import Schema
-from .jobstatus import JobStatus
+from .schema import JobStatus, BaseSchema
 
 
 class ACROSSBase:
@@ -16,8 +18,8 @@ class ACROSSBase:
     status: JobStatus
 
     # API descriptors type hints
-    _schema: Schema
-    _get_schema: Schema
+    _schema: BaseSchema
+    _get_schema: BaseSchema
     _mission: str
     _api_name: str = __name__
 
@@ -59,7 +61,11 @@ class ACROSSBase:
         dict
             Dictionary of arguments with values
         """
-        return {k: v for k, v in self._get_schema.dump(self).items() if v is not None}  # type: ignore
+        return {
+            k: v
+            for k, v in self._get_schema.model_validate(self).__dict__.items()
+            if v is not None
+        }
 
     @property
     def parameters(self) -> dict:
@@ -71,7 +77,11 @@ class ACROSSBase:
         dict
             Dictionary of parameters
         """
-        return {k: v for k, v in self._schema.dump(self).items() if v is not None}  # type: ignore
+        return {
+            k: v
+            for k, v in self._schema.model_validate(self).__dict__.items()
+            if v is not None
+        }
 
     @parameters.setter
     def parameters(self, params: dict):
@@ -83,11 +93,9 @@ class ACROSSBase:
         params : dict
             Dictionary of class parameters
         """
-        _ = [
-            setattr(self, k, v)
-            for k, v in self._schema.load(params).__dict__.items()
-            if v is not None
-        ]
+        for k, v in self._schema.model_dump(**params).items():
+            if v is not None:
+                setattr(self, k, v)
 
     def get(self) -> bool:
         """
@@ -104,11 +112,12 @@ class ACROSSBase:
         HTTPError
             Raised if GET doesn't return a 200 response.
         """
-        if self.validate():
+        if self.validate_get():
             req = requests.get(self.api_url, params=self.arguments)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                self.parameters = self._schema.loads(req.text).parameters  # type: ignore
+                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                    setattr(self, k, v)
                 if self.status.status == "Accepted":
                     return True
                 else:
@@ -137,11 +146,13 @@ class ACROSSBase:
         """
         if self.validate():
             req = requests.put(
-                self.api_url, params=self.arguments, json=self._put_schema.dump(self)
+                self.api_url,
+                params=self.arguments,
+                json=self._put_schema.model_dump(self),
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                self.__init__(**self._schema.loads(req.text).__dict__)  # type: ignore
+                self.__init__(**self._schema.model_validate(**req.json()).__dict__)  # type: ignore
                 if self.status.status == "Accepted":
                     return True
                 else:
@@ -170,7 +181,7 @@ class ACROSSBase:
         """
         if self.validate():
             req = requests.post(
-                self.api_url, params=self.arguments, json=self._put_schema.dump(self)
+                self.api_url, params=self.arguments, json=self._post_schema.dump(self)
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
@@ -186,6 +197,22 @@ class ACROSSBase:
             req.raise_for_status()
         return False
 
+    def validate_get(self) -> bool:
+        """Validate arguments for GET
+
+        Returns
+        -------
+        bool
+            Do arguments validate? True | False
+        """
+        try:
+            self._get_schema.model_validate(self)
+        except ValidationError as e:
+            for error in e.errors():
+                self.status.error(f"{error['loc'][0]}: {error['msg']}")
+            return False
+        return True
+
     def validate(self) -> bool:
         """"""
         """Perform validation of arguments against schema, record those errors
@@ -196,7 +223,7 @@ class ACROSSBase:
         bool
             Did validation pass with no errors? (True | False)
         """
-        errors = self._get_schema.validate(self.arguments)
+        errors = self._get_schema.model_validate(self.arguments)
         [self.status.errors.append(f"{k}: {v[0]}") for k, v in errors.items()]
         if len(self.status.errors) == 0:
             return True
@@ -236,7 +263,7 @@ class ACROSSBase:
             table = []
             for row in _parameters:
                 value = getattr(self, row)
-                if row == "status" and type(value) != str:
+                if row == "status" and type(value) is not str:
                     table.append(value.status)
                 else:
                     table.append(value)

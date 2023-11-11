@@ -1,10 +1,12 @@
-from datetime import datetime
 from dataclasses import dataclass
-from .base import ACROSSBase
+from datetime import datetime
+
 from marshmallow import Schema, fields, post_load
-from .user import UserArgSchema
+
+from .base import ACROSSBase
 from .coords import CoordSchema
 from .daterange import DateRangeSchema
+from .user import UserArgSchema
 
 
 class VisWindowSchema(Schema):

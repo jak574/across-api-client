@@ -1,12 +1,13 @@
 import re
-from datetime import datetime, timedelta, date, timezone
+import warnings
+from datetime import date, datetime, timedelta, timezone
+from typing import Optional, Union
+
+import astropy.units as u
+import numpy as np
+from astropy.time import Time, TimeDelta
 from astropy.units import Quantity
 from dateutil import parser
-import warnings
-from typing import Union, Optional
-import astropy.units as u
-from astropy.time import TimeDelta, Time
-import numpy as np
 
 
 def tablefy(table: list, header: Optional[list] = None) -> str:
