@@ -78,6 +78,8 @@ class ACROSSBase:
         # Send username/api_key if set
         if hasattr(self, "username") and hasattr(self, "api_key"):
             argdict = {"username": self.username, "api_key": self.api_key}
+        else:
+            argdict = {}
 
         for k in self._get_schema.model_fields.keys():
             if hasattr(self, k) and getattr(self, k) is not None:
