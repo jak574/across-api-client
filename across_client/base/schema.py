@@ -234,6 +234,7 @@ class PointBase(BaseSchema):
     ra: Optional[float] = None
     dec: Optional[float] = None
     roll: Optional[float] = None
+    infov: Optional[bool] = None
     observing: bool
 
 

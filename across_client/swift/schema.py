@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 
 from ..base.schema import (
     BaseSchema,
@@ -9,6 +10,7 @@ from ..base.schema import (
     PointingGetSchemaBase,
     PointingSchemaBase,
     UserSchema,
+    JobStatus,
 )
 
 
@@ -72,3 +74,17 @@ class SwiftObservationsPutSchema(BaseSchema):
 
 class SwiftObservationsSchema(PlanSchemaBase):
     entries: List[SwiftObsEntry]  # type: ignore
+
+
+class SwiftFOVCheckGetSchema(BaseSchema):
+    ra: float
+    dec: float
+    begin: datetime
+    end: datetime
+    stepsize: int = 60
+    earthoccult: bool = True
+
+
+class SwiftFOVCheckSchema(BaseSchema):
+    entries: List[SwiftPoint]
+    status: JobStatus

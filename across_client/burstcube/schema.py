@@ -91,8 +91,7 @@ class BurstCubeFOVCheckGetSchema(BaseSchema):
 
 
 class BurstCubeFOVCheckSchema(BaseSchema):
-    pointings: List[BurstCubePoint]
-    entries: List[bool]
+    entries: List[BurstCubePoint]
     status: JobStatus
 
 
