@@ -63,7 +63,7 @@ class OptionalCoordSchema(BaseSchema):
             for key in data.keys():
                 if key == "ra" or key == "dec":
                     data[key] = coord_convert(data[key])
-        else:
+        elif hasattr(data, "ra") and hasattr(data, "dec"):
             data.ra = coord_convert(data.ra)
             data.dec = coord_convert(data.dec)
         return data

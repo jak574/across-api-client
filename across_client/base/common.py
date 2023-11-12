@@ -42,6 +42,11 @@ class ACROSSBase:
         str
             URL for API call
         """
+        argdict = self.arguments
+        # If arguments has `id` in it, then put this in the path
+        if "id" in argdict.keys() and argdict["id"] is not None:
+            id = argdict.pop("id")
+            return f"{API_URL}{self._mission}/{self._api_name}/{id}"
         return f"{API_URL}{self._mission}/{self._api_name}"
 
     @property
@@ -54,8 +59,11 @@ class ACROSSBase:
         str
             URL for GET API request
         """
-        api_params = urlencode(self.arguments)
-        return f"{self.api_url}?{api_params}"
+        argdict = self.arguments
+        # If arguments has `id` in it, then put this in the path
+        if "id" in argdict.keys() and argdict["id"] is not None:
+            _ = argdict.pop("id")
+        return f"{self.api_url}?{urlencode(argdict)}"
 
     @property
     def arguments(self) -> dict:
@@ -104,7 +112,7 @@ class ACROSSBase:
             Dictionary of class parameters
         """
         for k, v in self._schema(**params).model_dump().items():
-            if v is not None:
+            if hasattr(self, k) and v is not None:
                 setattr(self, k, v)
 
     def get(self) -> bool:
@@ -124,6 +132,38 @@ class ACROSSBase:
         """
         if self.validate_get():
             req = requests.get(self.api_url, params=self.arguments)
+            if req.status_code == 200:
+                # Parse, validate and record values from returned API JSON
+                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                    setattr(self, k, v)
+                if self.status.status == "Accepted":
+                    return True
+                else:
+                    return False
+            if req.status_code == 422:
+                print(req.text)
+                return False
+            # Raise an exception if the HTML response was not 200
+            req.raise_for_status()
+        return False
+
+    def delete(self) -> bool:
+        """
+        Perform a 'GET' submission to ACROSS API. Used for fetching
+        information.
+
+        Returns
+        -------
+        bool
+            Was the get successful?
+
+        Raises
+        ------
+        HTTPError
+            Raised if GET doesn't return a 200 response.
+        """
+        if self.validate_del():
+            req = requests.delete(self.api_url, params=self.arguments)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()).__dict__.items():

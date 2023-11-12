@@ -15,7 +15,7 @@ from ..base.schema import (
 class BurstCubeTOOModelSchema(OptionalCoordSchema):
     """Schema to retrieve all information about a BurstCubeTOO Request"""
 
-    too_id: Optional[int] = None
+    id: Optional[int] = None
     username: str
     timestamp: Optional[datetime] = None
     trigger_mission: Optional[str] = None
@@ -31,7 +31,7 @@ class BurstCubeTOOModelSchema(OptionalCoordSchema):
 class BurstCubeTOOPutSchema(OptionalCoordSchema):
     """Schema to retrieve all information about a BurstCubeTOO Request"""
 
-    too_id: Optional[int] = None
+    id: Optional[int] = None
     username: str
     timestamp: Optional[datetime] = None
     trigger_mission: Optional[str] = None
@@ -45,7 +45,7 @@ class BurstCubeTOOPutSchema(OptionalCoordSchema):
 
 
 class BurstCubeTOODelSchema(BaseSchema):
-    too_id: int
+    id: int
 
 
 class BurstCubeTOOPostSchema(OptionalCoordSchema):
@@ -97,7 +97,7 @@ class BurstCubeFOVCheckSchema(BaseSchema):
 
 
 class BurstCubeTOOGetSchema(BaseSchema):
-    too_id: int
+    id: int
 
 
 class BurstCubeTOORequestsGetSchema(UserSchema):
