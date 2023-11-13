@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional
 
 from ..base.schema import (
@@ -12,7 +13,32 @@ from ..base.schema import (
 )
 
 
-class BurstCubeTOOModelSchema(OptionalCoordSchema):
+class TOOReason(str, Enum):
+    """Reasons for rejecting TOO observations"""
+
+    saa = "In SAA"
+    earth_occult = "Earth occulted"
+    moon_occult = "Moon occulted"
+    sun_occult = "Sun occulted"
+    too_old = "Too old"
+    other = "Other"
+    none = "None"
+
+
+class TOOStatus(str, Enum):
+    requested = "Requested"
+    rejected = "Rejected"
+    declined = "Declined"
+    approved = "Approved"
+    executed = "Executed"
+    other = "Other"
+
+
+class BurstCubeTOOCoordSchema(OptionalCoordSchema):
+    error: Optional[float] = None
+
+
+class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
     """Schema to retrieve all information about a BurstCubeTOO Request"""
 
     id: Optional[int] = None
@@ -26,9 +52,11 @@ class BurstCubeTOOModelSchema(OptionalCoordSchema):
     end: Optional[datetime] = None
     exposure: float = 200
     offset: float = -50
+    reason: TOOReason = TOOReason.none
+    too_status: TOOStatus = TOOStatus.requested
 
 
-class BurstCubeTOOPutSchema(OptionalCoordSchema):
+class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
     """Schema to retrieve all information about a BurstCubeTOO Request"""
 
     id: Optional[int] = None
@@ -48,7 +76,7 @@ class BurstCubeTOODelSchema(BaseSchema):
     id: int
 
 
-class BurstCubeTOOPostSchema(OptionalCoordSchema):
+class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
     """Schema to retrieve all information about a BurstCubeTOO Request"""
 
     username: str

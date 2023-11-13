@@ -24,7 +24,7 @@ class BaseSchema(BaseModel):
 
 
 class CoordSchema(BaseSchema):
-    """Schema that RA/Dec"""
+    """Schema that defines basic RA/Dec"""
 
     ra: float = Field(ge=0, lt=360)
     dec: float = Field(ge=-90, le=90)
@@ -162,17 +162,8 @@ class JobStatus(BaseSchema):
 
 # Schema for Visibility Classes
 class VisWindow(DateRangeSchema):
-    @property
-    def length(self) -> float:
-        return (self.end - self.begin).total_seconds() / 86400
-
-    def __getitem__(self, index) -> datetime:
-        if index == 0:
-            return self.begin
-        elif index == 1:
-            return self.end
-        else:
-            raise IndexError("list index out of range")
+    initial: str
+    final: str
 
 
 class VisibilitySchema(BaseSchema):
@@ -207,10 +198,12 @@ class TLESchema(BaseSchema):
 
 
 # SAA Schema
-class SAAEntry(VisWindow):
+class SAAEntry(DateRangeSchema):
     """Simple class to hold a single SAA passage"""
 
-    pass
+    @property
+    def length(self) -> float:
+        return (self.end - self.begin).total_seconds() / 86400
 
 
 class SAASchema(BaseSchema):
@@ -234,8 +227,8 @@ class PointBase(BaseSchema):
     ra: Optional[float] = None
     dec: Optional[float] = None
     roll: Optional[float] = None
-    infov: Optional[bool] = None
     observing: bool
+    infov: Optional[bool] = None
 
 
 class PointingSchemaBase(BaseSchema):
@@ -370,58 +363,3 @@ class ConfigSchema(BaseSchema):
     ephem: EphemConfigSchema
     visibility: VisibilityConfigSchema
     tle: TLEConfigSchema
-
-
-class HelloSchema(BaseSchema):
-    """
-    Schema defining the returned attributes of the  ACROSS API Hello class.
-    """
-
-    hello: str
-    status: JobStatus
-
-
-class HelloGetSchema(BaseSchema):
-    """
-    Schema to validate input parameters of ACROSS API Hello class.
-    """
-
-    name: Optional[str] = None
-
-
-class ResolveSchema(BaseSchema):
-    ra: float
-    dec: float
-    resolver: str
-    status: JobStatus
-
-
-class ResolveGetSchema(BaseSchema):
-    """Schema defines required parameters for a GET"""
-
-    name: str
-
-
-class JobSchema(BaseSchema):
-    """Full return of Job Information for ACROSSAPIJobs"""
-
-    jobnumber: Optional[int] = None
-    reqtype: str
-    apiversion: str
-    began: datetime
-    completed: datetime
-    expires: datetime
-    params: str
-    result: Optional[str] = None
-    status: Optional[str] = None
-
-
-class UserArgSchema(BaseSchema):
-    username: Optional[str] = "anonymous"
-    api_key: Optional[str] = None
-
-    @model_validator(mode="after")
-    def username_requires_api_key(self) -> "UserArgSchema":
-        if self.username != "anonymous" and self.api_key is None:
-            raise ValueError("api_key required if username is set")
-        return self
