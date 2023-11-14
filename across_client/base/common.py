@@ -3,7 +3,6 @@ from typing import Type
 from urllib.parse import urlencode
 
 import requests
-from pydantic import ValidationError
 
 from ..constants import API_URL
 from ..functions import tablefy
