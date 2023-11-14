@@ -5,10 +5,7 @@ from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
 from ..base.schema import JobStatus
 from .constants import MISSION
-from .schema import (
-    SwiftFOVCheckGetSchema,
-    SwiftFOVCheckSchema,
-)
+from .schema import SwiftFOVCheckGetSchema, SwiftFOVCheckSchema
 
 
 class SwiftFOVCheck(ACROSSBase, ACROSSResolveName, ACROSSDateRange):

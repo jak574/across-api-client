@@ -7,10 +7,10 @@ from ..base.schema import JobStatus
 from ..base.user import ACROSSUser
 from .constants import MISSION
 from .schema import (
+    SwiftObsEntry,
     SwiftObservationsGetSchema,
     SwiftObservationsPutSchema,
     SwiftObservationsSchema,
-    SwiftObsEntry,
 )
 
 

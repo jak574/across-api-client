@@ -48,6 +48,7 @@ class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
     trigger_instrument: Optional[str] = None
     trigger_id: Optional[str] = None
     trigger_time: Optional[datetime] = None
+    classification: Optional[str] = None
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
     exposure: float = 200
@@ -66,10 +67,13 @@ class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
     trigger_instrument: Optional[str] = None
     trigger_id: Optional[str] = None
     trigger_time: Optional[datetime] = None
+    classification: Optional[str] = None
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
     exposure: Optional[float] = None
     offset: Optional[float] = None
+    reason: TOOReason = TOOReason.none
+    too_status: TOOStatus = TOOStatus.requested
 
 
 class BurstCubeTOODelSchema(BaseSchema):
@@ -85,6 +89,7 @@ class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
     trigger_instrument: str  # Optional[str] = None
     trigger_id: str  # Optional[str] = None
     trigger_time: datetime  # Optional[datetime] = None
+    classification: Optional[str] = None
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
     exposure: float = 200
@@ -131,7 +136,13 @@ class BurstCubeTOORequestsGetSchema(UserSchema):
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
     trigger_time: Optional[datetime] = None
+    trigger_mission: Optional[str] = None
+    trigger_instrument: Optional[str] = None
+    trigger_id: Optional[str] = None
     limit: Optional[int] = None
+    ra: Optional[float] = None
+    dec: Optional[float] = None
+    radius: Optional[float] = None
 
 
 class BurstCubeTOORequestsSchema(BaseSchema):

@@ -1,3 +1,4 @@
+import json
 from typing import Type
 from urllib.parse import urlencode
 
@@ -7,7 +8,6 @@ from pydantic import ValidationError
 from ..constants import API_URL
 from ..functions import tablefy
 from .schema import BaseSchema, JobStatus
-import json
 
 
 class ACROSSBase:

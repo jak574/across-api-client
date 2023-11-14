@@ -1,8 +1,9 @@
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
 from ..base.schema import (
     BaseSchema,
+    JobStatus,
     PlanEntryBase,
     PlanGetSchemaBase,
     PlanSchemaBase,
@@ -10,7 +11,6 @@ from ..base.schema import (
     PointingGetSchemaBase,
     PointingSchemaBase,
     UserSchema,
-    JobStatus,
 )
 
 
