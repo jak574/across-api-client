@@ -194,7 +194,7 @@ class ACROSSBase:
         Raises
         ------
         HTTPError
-            Raised if GET doesn't return a 200 response.
+            Raised if GET doesn't return a 201 response.
         """
         if self.validate_put():
             req = requests.put(
@@ -204,19 +204,13 @@ class ACROSSBase:
                     self._put_schema.model_validate(self).model_dump_json()
                 ),
             )
-            if req.status_code == 200:
+            if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()).__dict__.items():
                     setattr(self, k, v)
-                if self.status.status == "Accepted":
                     return True
-                else:
-                    return False
-            if req.status_code == 422:
-                print(req.text)
-                return False
-            # Raise an exception if the HTML response was not 200
-            req.raise_for_status()
+            else:
+                req.raise_for_status()
         return False
 
     def post(self) -> bool:
@@ -232,7 +226,7 @@ class ACROSSBase:
         Raises
         ------
         HTTPError
-            Raised if GET doesn't return a 200 response.
+            Raised if GET doesn't return a 201 response.
         """
         if self.validate_post():
             req = requests.post(
@@ -242,19 +236,15 @@ class ACROSSBase:
                     self._post_schema.model_validate(self).model_dump_json()
                 ),
             )
-            if req.status_code == 200:
+            if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()).__dict__.items():
                     setattr(self, k, v)
-                if self.status.status == "Accepted":
                     return True
-                else:
-                    return False
-            if req.status_code == 422:
-                print(req.text)
-                return False
-            # Raise an exception if the HTML response was not 200
-            req.raise_for_status()
+
+            else:
+                # Raise an exception if the HTML response was not 200
+                req.raise_for_status()
         return False
 
     def validate_get(self) -> bool:
@@ -264,13 +254,14 @@ class ACROSSBase:
         -------
         bool
             Do arguments validate? True | False
+
+        Raises
+        ------
+        ValidationError
+            If arguments don't validate
         """
-        try:
-            self._get_schema.model_validate(self)
-        except ValidationError as e:
-            for error in e.errors():
-                self.status.error(f"{error['loc'][0]}: {error['msg']}")
-            return False
+
+        self._get_schema.model_validate(self)
         return True
 
     def validate_put(self) -> bool:
@@ -280,14 +271,16 @@ class ACROSSBase:
         -------
         bool
             Is it validated? True | False
+
+        Raises
+        ------
+        ValidationError
+            If the value to be PUT doesn't match the Schema
+
+
         """
-        #        try:
+
         self._put_schema.model_validate(self.__dict__)
-        #        except ValidationError as e:
-        #            for e in e.errors():
-        #                if e["type"] == "missing":
-        #                    self.status.error(f"Required argument missing: {e['loc'][0]}")
-        #            return False
         return True
 
     def validate_post(self) -> bool:
@@ -298,13 +291,7 @@ class ACROSSBase:
         bool
             Is it validated? True | False
         """
-        #        try:
         self._post_schema.model_validate(self.__dict__)
-        #        except ValidationError as e:
-        #            for e in e.errors():
-        #                if e["type"] == "missing":
-        #                    self.status.error(f"Required argument missing: {e['loc'][0]}")
-        #            return False
         return True
 
     def validate_del(self) -> bool:
@@ -315,13 +302,8 @@ class ACROSSBase:
         bool
             Is it validated? True | False
         """
-        #        try:
+
         self._del_schema.model_validate(self.__dict__)
-        #        except ValidationError as e:
-        #            for e in e.errors():
-        #                if e["type"] == "missing":
-        #                    self.status.error(f"Required argument missing: {e['loc'][0]}")
-        #            return False
         return True
 
     @property
