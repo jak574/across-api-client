@@ -135,17 +135,12 @@ class ACROSSBase:
             req = requests.get(self.api_url, params=self.arguments)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                for k, v in self._schema.model_validate(req.json()):
                     setattr(self, k, v)
-                if self.status.status == "Accepted":
-                    return True
-                else:
-                    return False
-            if req.status_code == 422:
-                print(req.text)
-                return False
-            # Raise an exception if the HTML response was not 200
-            req.raise_for_status()
+                return True
+            else:
+                # Raise an exception if the HTML response was not 200
+                req.raise_for_status()
         return False
 
     def delete(self) -> bool:
@@ -167,17 +162,12 @@ class ACROSSBase:
             req = requests.delete(self.api_url, params=self.arguments)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
-                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                for k, v in self._schema.model_validate(req.json()):
                     setattr(self, k, v)
-                if self.status.status == "Accepted":
-                    return True
-                else:
-                    return False
-            if req.status_code == 422:
-                print(req.text)
-                return False
-            # Raise an exception if the HTML response was not 200
-            req.raise_for_status()
+                return True
+            else:
+                # Raise an exception if the HTML response was not 200
+                req.raise_for_status()
         return False
 
     def put(self) -> bool:
@@ -205,9 +195,9 @@ class ACROSSBase:
             )
             if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
-                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                for k, v in self._schema.model_validate(req.json()):
                     setattr(self, k, v)
-                    return True
+                return True
             else:
                 req.raise_for_status()
         return False
@@ -237,10 +227,9 @@ class ACROSSBase:
             )
             if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
-                for k, v in self._schema.model_validate(req.json()).__dict__.items():
+                for k, v in self._schema.model_validate(req.json()):
                     setattr(self, k, v)
-                    return True
-
+                return True
             else:
                 # Raise an exception if the HTML response was not 200
                 req.raise_for_status()
