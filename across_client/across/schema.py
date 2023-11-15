@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import model_validator
 
-from ..base.schema import BaseSchema, JobStatus
+from ..base.schema import BaseSchema, JobInfo
 
 
 class HelloSchema(BaseSchema):
@@ -12,7 +12,7 @@ class HelloSchema(BaseSchema):
     """
 
     hello: str
-    status: JobStatus
+    status: JobInfo
 
 
 class HelloGetSchema(BaseSchema):
@@ -27,7 +27,7 @@ class ResolveSchema(BaseSchema):
     ra: float
     dec: float
     resolver: str
-    status: JobStatus
+    status: JobInfo
 
 
 class ResolveGetSchema(BaseSchema):
@@ -43,7 +43,7 @@ class JobSchema(BaseSchema):
     reqtype: str
     apiversion: str
     began: datetime
-    completed: datetime
+    created: datetime
     expires: datetime
     params: str
     result: Optional[str] = None
@@ -63,7 +63,7 @@ class UserArgSchema(BaseSchema):
 
 class ACROSSAPIJobsSchema(BaseSchema):
     entries: List[JobSchema]  # = fields.List(cls_or_instance=fields.Nested(JobSchema))
-    status: JobStatus  # = fields.Nested(JobStatusSchema)
+    status: JobInfo  # = fields.Nested(JobInfoSchema)
 
 
 class ACROSSAPIJobsGetSchema(BaseSchema):

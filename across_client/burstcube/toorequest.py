@@ -4,7 +4,7 @@ from typing import Optional
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobStatus
+from ..base.schema import JobInfo
 from ..base.user import ACROSSUser
 from .constants import MISSION
 from .schema import (
@@ -28,7 +28,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     end: datetime
     exposure: float
     offset: float
-    status: JobStatus
+    status: JobInfo
 
     # API definitions
 
@@ -43,7 +43,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     def __init__(self, **kwargs):
         self.exposure = 200
         self.offset = -50
-        self.status = JobStatus()
+        self.status = JobInfo()
         [setattr(self, k, a) for k, a in kwargs.items()]
 
 
@@ -53,7 +53,7 @@ class TOORequests(ACROSSBase, ACROSSUser):
     limit: int
     trigger_time: datetime
     entries: list
-    status: JobStatus
+    status: JobInfo
 
     _mission = MISSION
     _api_name = "TOORequests"
@@ -61,7 +61,7 @@ class TOORequests(ACROSSBase, ACROSSUser):
     _get_schema = BurstCubeTOORequestsGetSchema
 
     def __init__(self, **kwargs):
-        self.status = JobStatus()
+        self.status = JobInfo()
         self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
 

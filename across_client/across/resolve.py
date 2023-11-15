@@ -1,7 +1,7 @@
 from typing import Optional
 
 from ..base.common import ACROSSBase
-from .schema import JobStatus, ResolveGetSchema, ResolveSchema
+from .schema import JobInfo, ResolveGetSchema, ResolveSchema
 
 
 class Resolve(ACROSSBase):
@@ -10,7 +10,7 @@ class Resolve(ACROSSBase):
     ra: Optional[float] = None
     dec: Optional[float] = None
     resolver: Optional[str] = None
-    status: JobStatus
+    status: JobInfo
 
     _mission = "ACROSS"
     _api_name = "Resolve"
@@ -18,7 +18,7 @@ class Resolve(ACROSSBase):
     _get_schema = ResolveGetSchema
 
     def __init__(self, name: Optional[str] = None, **kwargs):
-        self.status = JobStatus()
+        self.status = JobInfo()
         self.name = name
         for k, a in kwargs.items():
             setattr(self, k, a)
@@ -54,6 +54,5 @@ class ACROSSResolveName:
         if hasattr(self, "ra") is False or self.ra is None:
             r = Resolve(name=targname)
             r.get()
-            if r.status.status == "Accepted":
-                self.ra = r.ra
-                self.dec = r.dec
+            self.ra = r.ra
+            self.dec = r.dec

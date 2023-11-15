@@ -6,7 +6,7 @@ import requests
 
 from ..constants import API_URL
 from ..functions import tablefy
-from .schema import BaseSchema, JobStatus
+from .schema import BaseSchema, JobInfo
 
 
 class ACROSSBase:
@@ -16,7 +16,7 @@ class ACROSSBase:
 
     # Type hints
     entries: list
-    status: JobStatus
+    status: JobInfo
 
     # API descriptors type hints
     _schema: Type[BaseSchema]
@@ -343,13 +343,8 @@ class ACROSSBase:
         str
             HTML summary of data
         """
-        if hasattr(self, "status") and self.status.status == "Rejected":
-            return "<b>Rejected with the following error(s): </b>" + " ".join(
-                self.status.errors
-            )
+        header, table = self._table
+        if len(table) > 0:
+            return tablefy(table, header)
         else:
-            header, table = self._table
-            if len(table) > 0:
-                return tablefy(table, header)
-            else:
-                return "No data"
+            return "No data"
