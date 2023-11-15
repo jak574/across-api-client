@@ -127,13 +127,11 @@ class UserSchema(BaseSchema):
 
 
 # Schema defining the API Job status
-class JobStatus(BaseSchema):
+class JobInfo(BaseSchema):
     """ACROSS API Job status information"""
 
-    status: str = "Unknown"
     jobnumber: Optional[int] = None
-    completed: Optional[datetime] = None
-    errors: List[str] = []
+    created: Optional[datetime] = None
     warnings: List[str] = []
 
     @property
@@ -146,13 +144,6 @@ class JobStatus(BaseSchema):
 
     def __str__(self):
         return f"{self.status}"
-
-    def error(self, error):
-        """Add an error to the list of errors"""
-        if error not in self.errors:
-            self.errors.append(error)
-            # Any error makes a API call rejected
-            self.status = "Rejected"
 
     def warning(self, warning):
         """Add a warning to the list of warnings"""
@@ -168,7 +159,7 @@ class VisWindow(DateRangeSchema):
 
 class VisibilitySchema(BaseSchema):
     entries: List[VisWindow]
-    status: JobStatus
+    status: JobInfo
 
 
 class VisibilityGetSchema(CoordSchema, DateRangeSchema):
@@ -210,7 +201,7 @@ class SAASchema(BaseSchema):
     """Returns from thee SAA class"""
 
     entries: List[SAAEntry]
-    status: JobStatus
+    status: JobInfo
 
 
 class SAAGetSchema(DateRangeSchema):
@@ -252,7 +243,7 @@ class PlanGetSchemaBase(OptionalDateRangeSchema, OptionalCoordSchema):
 
 class PlanSchemaBase(BaseSchema):
     entries: List[PlanEntryBase]
-    status: Optional[JobStatus] = None
+    status: Optional[JobInfo] = None
 
 
 # Ephem Schema
@@ -269,7 +260,7 @@ class EphemSchema(BaseSchema):
     latitude: List[float]
     longitude: List[float]
     stepsize: int = 60
-    status: JobStatus
+    status: JobInfo
 
 
 class EphemGetSchema(DateRangeSchema):

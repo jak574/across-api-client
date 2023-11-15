@@ -3,7 +3,7 @@ from datetime import datetime
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobStatus
+from ..base.schema import JobInfo
 from ..base.user import ACROSSUser
 from .constants import MISSION
 from .schema import (
@@ -30,7 +30,7 @@ class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _api_name = "Plan"
 
     def __init__(self, **kwargs):
-        self.status = JobStatus()
+        self.status = JobInfo()
         self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
 
