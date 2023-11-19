@@ -139,6 +139,9 @@ class ACROSSBase:
                 for k, v in self._schema.model_validate(req.json()):
                     setattr(self, k, v)
                 return True
+            elif req.status_code == 404:
+                """Handle 404 errors gracefully, by issuing a warning"""
+                warnings.warn(req.json()["detail"])
             else:
                 # Raise an exception if the HTML response was not 200
                 req.raise_for_status()
@@ -354,3 +357,9 @@ class ACROSSBase:
             return tablefy(table, header)
         else:
             return "No data"
+
+    def __repr__(self) -> str:
+        # print a string showing the API call and arguments with their values
+        # in a way that can be copied and pasted into a script
+        args = ",".join([f"{k}={v}" for k, v in self.arguments.items()])
+        return f"{self.__class__.__name__}({args})"
