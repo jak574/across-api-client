@@ -178,8 +178,8 @@ class UserSchema(BaseSchema):
 class JobInfo(BaseSchema):
     """Schema for ACROSS API Job status"""
 
-    jobnumber: Union[int, str, None] = None
     created: Optional[datetime] = None
+    expires: Optional[datetime] = None
     warnings: List[str] = []
 
     @property
