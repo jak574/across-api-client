@@ -73,3 +73,21 @@ class ACROSSResolveName:
             r.get()
             self.ra = r.ra
             self.dec = r.dec
+
+
+def resolve(name: str) -> Resolve:
+    """Resolve a target name to coordinates
+
+    Parameters
+    ----------
+    name : str
+        Target name that can be resolved by the Resolve class
+
+    Returns
+    -------
+    Resolve
+        A Resolve object with the coordinates of the target
+    """
+    r = Resolve(name=name)
+    r.get()
+    return r
