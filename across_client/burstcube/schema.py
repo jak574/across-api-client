@@ -49,6 +49,7 @@ class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
     trigger_id: Optional[str] = None
     trigger_time: Optional[datetime] = None
     classification: Optional[str] = None
+    justification: Optional[str] = None
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
     exposure: float = 200
@@ -90,6 +91,7 @@ class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
     trigger_id: str  # Optional[str] = None
     trigger_time: datetime  # Optional[datetime] = None
     classification: Optional[str] = None
+    justification: Optional[str] = None
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
     exposure: float = 200
