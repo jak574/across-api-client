@@ -1,6 +1,7 @@
 import json
 from typing import Type
 from urllib.parse import urlencode
+import warnings
 
 import requests
 
@@ -230,6 +231,9 @@ class ACROSSBase:
                 for k, v in self._schema.model_validate(req.json()):
                     setattr(self, k, v)
                 return True
+            elif req.status_code == 200:
+                warnings.warn(req.json()["detail"])
+                return False
             else:
                 # Raise an exception if the HTML response was not 200
                 req.raise_for_status()

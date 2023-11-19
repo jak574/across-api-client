@@ -22,6 +22,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     trigger_instrument: str
     trigger_id: str
     trigger_time: datetime
+    justification: str
     ra: Optional[float]
     dec: Optional[float]
     begin: datetime

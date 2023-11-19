@@ -130,7 +130,7 @@ class UserSchema(BaseSchema):
 class JobInfo(BaseSchema):
     """ACROSS API Job status information"""
 
-    jobnumber: Optional[int] = None
+    jobnumber: Union[int, str, None] = None
     created: Optional[datetime] = None
     warnings: List[str] = []
 
