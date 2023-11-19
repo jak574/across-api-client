@@ -1,9 +1,11 @@
 import json
+from math import e
 import warnings
 from typing import Type
 from urllib.parse import urlencode
 
 import requests
+from zmq import has
 
 from ..constants import API_URL
 from ..functions import tablefy
@@ -257,8 +259,11 @@ class ACROSSBase:
         ValidationError
             If arguments don't validate
         """
-
-        self._get_schema.model_validate(self)
+        if hasattr(self, "_get_schema"):
+            self._get_schema.model_validate(self)
+        else:
+            warnings.warn("GET not allowed for this class.")
+            return False
         return True
 
     def validate_put(self) -> bool:
@@ -276,8 +281,11 @@ class ACROSSBase:
 
 
         """
-
-        self._put_schema.model_validate(self.__dict__)
+        if hasattr(self, "_put_schema"):
+            self._put_schema.model_validate(self.__dict__)
+        else:
+            warnings.warn("PUT not allowed for this class.")
+            return False
         return True
 
     def validate_post(self) -> bool:
@@ -288,7 +296,11 @@ class ACROSSBase:
         bool
             Is it validated? True | False
         """
-        self._post_schema.model_validate(self.__dict__)
+        if hasattr(self, "_post_schema"):
+            self._post_schema.model_validate(self.__dict__)
+        else:
+            warnings.warn("POST not allowed for this class.")
+            return False
         return True
 
     def validate_del(self) -> bool:
@@ -299,8 +311,11 @@ class ACROSSBase:
         bool
             Is it validated? True | False
         """
-
-        self._del_schema.model_validate(self.__dict__)
+        if hasattr(self, "_del_schema"):
+            self._del_schema.model_validate(self.__dict__)
+        else:
+            warnings.warn("DELETE not allowed for this class.")
+            return False
         return True
 
     @property
