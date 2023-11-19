@@ -5,6 +5,23 @@ from .schema import JobInfo, ResolveGetSchema, ResolveSchema
 
 
 class Resolve(ACROSSBase):
+    """
+    Represents a resolver for resolving celestial object coordinates.
+
+    Attributes
+    ----------
+    name : Optional[str]
+        The name of the celestial object.
+    ra : Optional[float]
+        The right ascension of the celestial object.
+    dec : Optional[float]
+        The declination of the celestial object.
+    resolver : Optional[str]
+        The resolver used for resolving the coordinates.
+    status : JobInfo
+        The status of the resolver job.
+    """
+
     # Type hints
     name: Optional[str] = None
     ra: Optional[float] = None

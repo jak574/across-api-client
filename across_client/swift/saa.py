@@ -8,6 +8,44 @@ from .constants import MISSION
 
 
 class SwiftSAA(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
+    """
+    SwiftSAA class for handling Swift SAA (South Atlantic Anomaly) data.
+
+    Parameters:
+    ----------
+    ra : float
+        Right Ascension value.
+    dec : float
+        Declination value.
+    begin : datetime
+        Start date and time.
+    end : datetime
+        End date and time.
+    hires : bool, optional
+        Flag indicating whether to use high-resolution data. Default is True.
+    entries : list
+        List of entries.
+
+    Attributes:
+    ----------
+    _mission : str
+        Mission name.
+    _api_name : str
+        API name.
+    _schema : str
+        Schema name.
+    _get_schema : str
+        Get schema name.
+    status : JobInfo
+        Job information.
+
+    Methods:
+    -------
+    __init__(self, **kwargs)
+        Initializes a new instance of the SwiftSAA class.
+
+    """
+
     # Type hints
     ra: float
     dec: float
@@ -24,7 +62,8 @@ class SwiftSAA(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
 
     def __init__(self, **kwargs):
         self.status = JobInfo()
-        [setattr(self, k, a) for k, a in kwargs.items()]
+        for k, a in kwargs.items():
+            setattr(self, k, a)
 
 
 # Alias

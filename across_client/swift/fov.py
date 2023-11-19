@@ -9,6 +9,21 @@ from .schema import SwiftFOVCheckGetSchema, SwiftFOVCheckSchema
 
 
 class SwiftFOVCheck(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
+    """
+    Class representing a Swift FOV Check.
+
+    Parameters:
+    ----------
+    ra : float
+        Right Ascension coordinate.
+    dec : float
+        Declination coordinate.
+    begin : datetime
+        Start date and time of the observation.
+    end : datetime
+        End date and time of the observation.
+    """
+
     # Type hints
     ra: float
     dec: float
@@ -24,7 +39,8 @@ class SwiftFOVCheck(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
     def __init__(self, **kwargs):
         self.status = JobInfo()
         self.entries = []
-        [setattr(self, k, a) for k, a in kwargs.items()]
+        for k, a in kwargs.items():
+            setattr(self, k, a)
 
 
 # Alias

@@ -15,6 +15,41 @@ from .schema import (
 
 
 class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+    """
+    Class representing Swift observations.
+
+    Parameters:
+    ----------
+    ra : float
+        Right Ascension of the observation.
+    dec : float
+        Declination of the observation.
+    begin : datetime
+        Start time of the observation.
+    end : datetime
+        End time of the observation.
+    entries : list
+        List of observation entries.
+
+    Attributes:
+    ----------
+    _mission : str
+        Mission name.
+    _schema : SwiftObservationsSchema
+        Schema for Swift observations.
+    _put_schema : SwiftObservationsPutSchema
+        Schema for putting Swift observations.
+    _get_schema : SwiftObservationsGetSchema
+        Schema for getting Swift observations.
+    _api_name : str
+        Name of the API.
+
+    Methods:
+    -------
+    __init__(self, **kwargs)
+        Initializes a new instance of the SwiftObservations class.
+    """
+
     # Type hints
     ra: float
     dec: float
@@ -32,7 +67,8 @@ class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRan
     def __init__(self, **kwargs):
         self.status = JobInfo()
         self.entries = []
-        [setattr(self, k, a) for k, a in kwargs.items()]
+        for k, a in kwargs.items():
+            setattr(self, k, a)
 
 
 # Alias

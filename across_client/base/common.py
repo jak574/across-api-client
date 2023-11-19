@@ -1,7 +1,7 @@
 import json
+import warnings
 from typing import Type
 from urllib.parse import urlencode
-import warnings
 
 import requests
 
@@ -133,7 +133,7 @@ class ACROSSBase:
             Raised if GET doesn't return a 200 response.
         """
         if self.validate_get():
-            req = requests.get(self.api_url, params=self.arguments)
+            req = requests.get(self.api_url, params=self.arguments, timeout=60)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()):
@@ -160,7 +160,7 @@ class ACROSSBase:
             Raised if GET doesn't return a 200 response.
         """
         if self.validate_del():
-            req = requests.delete(self.api_url, params=self.arguments)
+            req = requests.delete(self.api_url, params=self.arguments, timeout=60)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()):
@@ -193,6 +193,7 @@ class ACROSSBase:
                 json=json.loads(
                     self._put_schema.model_validate(self).model_dump_json()
                 ),
+                timeout=60,
             )
             if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
@@ -225,6 +226,7 @@ class ACROSSBase:
                 json=json.loads(
                     self._post_schema.model_validate(self).model_dump_json()
                 ),
+                timeout=60,
             )
             if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
@@ -332,7 +334,7 @@ class ACROSSBase:
             table = []
             for row in _parameters:
                 value = getattr(self, row)
-                if row == "status" and type(value) is not str:
+                if row == "status" and not isinstance(value, str):
                     table.append(value.status)
                 else:
                     table.append(value)

@@ -24,6 +24,10 @@ class HelloGetSchema(BaseSchema):
 
 
 class ResolveSchema(BaseSchema):
+    """
+    A schema for resolving astronomical coordinates.
+    """
+
     ra: float
     dec: float
     resolver: str

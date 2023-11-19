@@ -18,6 +18,60 @@ from .schema import (
 
 
 class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+    """
+    Class representing a Target of Opportunity (TOO) request.
+
+    Parameters:
+    ----------
+    trigger_mission : str
+        The mission associated with the TOO request.
+    trigger_instrument : str
+        The instrument associated with the TOO request.
+    trigger_id : str
+        The ID of the trigger.
+    trigger_time : datetime
+        The time of the trigger.
+    justification : str
+        The justification for the TOO request.
+    ra : Optional[float]
+        The right ascension of the target (optional).
+    dec : Optional[float]
+        The declination of the target (optional).
+    begin : datetime
+        The start time of the TOO observation.
+    end : datetime
+        The end time of the TOO observation.
+    exposure : float
+        The exposure time for the TOO observation.
+    offset : float
+        The offset for the TOO observation.
+    status : JobInfo
+        The status of the TOO request.
+
+    Attributes:
+    ----------
+    _mission : str
+        The mission associated with the TOO request.
+    _api_name : str
+        The name of the API.
+    _schema : BurstCubeTOOSchema
+        The schema for the TOO request.
+    _put_schema : BurstCubeTOOPutSchema
+        The schema for updating the TOO request.
+    _post_schema : BurstCubeTOOPostSchema
+        The schema for creating a new TOO request.
+    _get_schema : BurstCubeTOOGetSchema
+        The schema for retrieving the TOO request.
+    _del_schema : BurstCubeTOOGetSchema
+        The schema for deleting the TOO request.
+
+    Methods:
+    -------
+    __init__(self, **kwargs)
+        Initializes a new instance of the TOO class.
+
+    """
+
     trigger_mission: str
     trigger_instrument: str
     trigger_id: str
@@ -45,16 +99,29 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         self.exposure = 200
         self.offset = -50
         self.status = JobInfo()
-        [setattr(self, k, a) for k, a in kwargs.items()]
+        for k, a in kwargs.items():
+            setattr(self, k, a)
 
 
 class TOORequests(ACROSSBase, ACROSSUser):
-    begin: datetime
-    end: datetime
-    limit: int
-    trigger_time: datetime
-    entries: list
-    status: JobInfo
+    """
+    Represents a Targer of Opportunity (TOO) request.
+
+    Attributes
+    ----------
+    begin : datetime
+        The start time of the observation.
+    end : datetime
+        The end time of the observation.
+    limit : int
+        The maximum number of entries for the observation.
+    trigger_time : datetime
+        The time at which the observation should be triggered.
+    entries : list
+        The list of entries for the observation.
+    status : JobInfo
+        The status of the observation.
+    """
 
     _mission = MISSION
     _api_name = "TOORequests"
@@ -64,7 +131,8 @@ class TOORequests(ACROSSBase, ACROSSUser):
     def __init__(self, **kwargs):
         self.status = JobInfo()
         self.entries = []
-        [setattr(self, k, a) for k, a in kwargs.items()]
+        for k, a in kwargs.items():
+            setattr(self, k, a)
 
 
 # Alias

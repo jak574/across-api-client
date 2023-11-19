@@ -26,6 +26,8 @@ class TOOReason(str, Enum):
 
 
 class TOOStatus(str, Enum):
+    """Status of a BurstCubeTOO Request"""
+
     requested = "Requested"
     rejected = "Rejected"
     declined = "Declined"
@@ -35,6 +37,8 @@ class TOOStatus(str, Enum):
 
 
 class BurstCubeTOOCoordSchema(OptionalCoordSchema):
+    """Schema for BurstCubeTOO coordinates with optional error"""
+
     error: Optional[float] = None
 
 
@@ -59,7 +63,7 @@ class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
 
 
 class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
-    """Schema to retrieve all information about a BurstCubeTOO Request"""
+    """Schema to update a BurstCubeTOO Request"""
 
     id: Optional[int] = None
     username: str
@@ -78,18 +82,20 @@ class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
 
 
 class BurstCubeTOODelSchema(BaseSchema):
+    """Schema to delete a BurstCubeTOO Request"""
+
     id: int
 
 
 class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
-    """Schema to retrieve all information about a BurstCubeTOO Request"""
+    """Schema to create a BurstCubeTOO Request"""
 
     username: str
     timestamp: Optional[datetime] = None
-    trigger_mission: str  # Optional[str] = None
-    trigger_instrument: str  # Optional[str] = None
-    trigger_id: str  # Optional[str] = None
-    trigger_time: datetime  # Optional[datetime] = None
+    trigger_mission: str
+    trigger_instrument: str
+    trigger_id: str
+    trigger_time: datetime
     classification: Optional[str] = None
     justification: Optional[str] = None
     begin: Optional[datetime] = None
@@ -105,18 +111,20 @@ class BurstCubeTOOSchema(BurstCubeTOOModelSchema):
 
 
 class BurstCubePoint(PointBase):
-    pass
+    """BurstCube Point"""
 
 
 class BurstCubePointingSchema(PointingSchemaBase):
-    pass
+    """BurstCube Pointing Schema"""
 
 
 class BurstCubePointingGetSchema(PointingGetSchemaBase):
-    pass
+    """BurstCube Pointing Get Schema"""
 
 
 class BurstCubeFOVCheckGetSchema(BaseSchema):
+    """BurstCube FOV Check Get Schema"""
+
     ra: float
     dec: float
     begin: datetime
@@ -126,15 +134,21 @@ class BurstCubeFOVCheckGetSchema(BaseSchema):
 
 
 class BurstCubeFOVCheckSchema(BaseSchema):
+    """BurstCube FOV Check Schema"""
+
     entries: List[BurstCubePoint]
     status: JobInfo
 
 
 class BurstCubeTOOGetSchema(BaseSchema):
+    """BurstCubeTOO Get Schema"""
+
     id: int
 
 
 class BurstCubeTOORequestsGetSchema(UserSchema):
+    """BurstCubeTOO Requests Get Schema"""
+
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
     trigger_time: Optional[datetime] = None
@@ -148,5 +162,7 @@ class BurstCubeTOORequestsGetSchema(UserSchema):
 
 
 class BurstCubeTOORequestsSchema(BaseSchema):
+    """BurstCubeTOO Requests Schema"""
+
     entries: List[BurstCubeTOOModelSchema]
     status: JobInfo

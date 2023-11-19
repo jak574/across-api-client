@@ -1,3 +1,42 @@
+"""
+This module contains the definition of various schemas used in the ACROSS API client.
+
+The schemas define the structure and validation rules for different data objects used in the client.
+These schemas are used for data serialization, deserialization, and validation.
+
+The module includes the following schemas:
+- BaseSchema: Base schema for all other schemas.
+- CoordSchema: Schema that defines basic RA/Dec coordinates.
+- PositionSchema: Schema that defines position with error.
+- OptionalCoordSchema: Schema that defines optional RA/Dec coordinates.
+- DateRangeSchema: Schema that defines date range.
+- OptionalDateRangeSchema: Schema that defines optional date range.
+- UserSchema: Schema for username and API key.
+- JobInfo: Schema for ACROSS API Job status.
+- VisWindow: Schema for visibility window.
+- VisibilitySchema: Schema for visibility entries.
+- VisibilityGetSchema: Schema for getting visibility.
+- TLEEntry: Schema for TLE entry.
+- TLESchema: Schema for TLE.
+- SAAEntry: Schema for SAA passage.
+- SAASchema: Schema for SAA entries.
+- SAAGetSchema: Schema for getting SAA entries.
+- PointBase: Schema for spacecraft pointing.
+- PointingSchemaBase: Schema for pointing entries.
+- PointingGetSchemaBase: Schema for getting pointing entries.
+- PlanEntryBase: Schema for plan entry.
+- PlanGetSchemaBase: Schema for getting plan entries.
+- PlanSchemaBase: Schema for plan entries.
+- EphemSchema: Schema for ephemeris entries.
+- EphemGetSchema: Schema for getting ephemeris entries.
+- MissionSchema: Schema for mission information.
+- FOVSchema: Schema for field of view.
+- InstrumentSchema: Schema for instrument information.
+- EphemConfigSchema: Schema for ephemeris configuration.
+- VisibilityConfigSchema: Schema for visibility configuration.
+- TLEConfigSchema: Schema for TLE configuration.
+- ConfigSchema: Schema for configuration.
+"""
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, Union
 
@@ -13,12 +52,13 @@ from .coords import coord_convert  # type: ignore
 
 
 class BaseSchema(BaseModel):
-    """Just define from_attributes for every Schema"""
+    """Base schema for all other schemas"""
 
     model_config = ConfigDict(from_attributes=True)
 
     @property
     def _table(self):
+        """Get the table representation of the schema"""
         header = self.model_fields.keys()
         return list(header), [list(self.model_dump().values())]
 
@@ -32,7 +72,8 @@ class CoordSchema(BaseSchema):
     @model_validator(mode="before")
     @classmethod
     def convert_coord(cls, data: Any) -> Any:
-        if type(data) is dict:
+        """Convert the coordinate data to a specific format"""
+        if isinstance(data, dict):
             for key in data.keys():
                 if key == "ra" or key == "dec":
                     data[key] = coord_convert(data[key])
@@ -43,15 +84,18 @@ class CoordSchema(BaseSchema):
 
     @property
     def skycoord(self) -> SkyCoord:
+        """Get the SkyCoord representation of the coordinates"""
         return SkyCoord(self.ra, self.dec, unit="deg")
 
 
 class PositionSchema(CoordSchema):
+    """Schema that defines position with error"""
+
     error: Optional[float] = None
 
 
 class OptionalCoordSchema(BaseSchema):
-    """Schema that defines basic RA/Dec"""
+    """Schema that defines optional RA/Dec"""
 
     ra: Optional[float] = Field(ge=0, lt=360, default=None)
     dec: Optional[float] = Field(ge=-90, le=90, default=None)
@@ -59,7 +103,8 @@ class OptionalCoordSchema(BaseSchema):
     @model_validator(mode="before")
     @classmethod
     def coord_convert(cls, data: Any) -> Any:
-        if type(data) is dict:
+        """Convert the coordinate data to a specific format"""
+        if isinstance(data, dict):
             for key in data.keys():
                 if key == "ra" or key == "dec":
                     data[key] = coord_convert(data[key])
@@ -71,12 +116,14 @@ class OptionalCoordSchema(BaseSchema):
     @model_validator(mode="after")
     @classmethod
     def check_ra_dec(cls, data: Any) -> Any:
+        """Check if RA and Dec are both set or both not set"""
         if data.ra is None or data.dec is None:
             assert data.ra == data.dec, "RA/Dec should both be set, or both not set"
         return data
 
     @property
     def skycoord(self) -> Optional[SkyCoord]:
+        """Get the SkyCoord representation of the coordinates"""
         if self.ra is not None and self.dec is not None:
             return SkyCoord(self.ra, self.dec, unit="deg")
         return None
@@ -91,6 +138,7 @@ class DateRangeSchema(BaseSchema):
     @model_validator(mode="after")
     @classmethod
     def check_dates(cls, data: Any) -> Any:
+        """Check if the end date is not before the begin date"""
         data.end = convert_to_dt(data.end)
         data.begin = convert_to_dt(data.begin)
         assert data.begin <= data.end, "End date should not be before begin"
@@ -98,7 +146,7 @@ class DateRangeSchema(BaseSchema):
 
 
 class OptionalDateRangeSchema(BaseSchema):
-    """Schema that defines date range, which is optional"""
+    """Schema that defines optional date range"""
 
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
@@ -106,6 +154,7 @@ class OptionalDateRangeSchema(BaseSchema):
     @model_validator(mode="after")
     @classmethod
     def check_dates(cls, data: Any) -> Any:
+        """Check if the begin and end dates are both set or both not set"""
         if data.begin is None or data.end is None:
             assert (
                 data.begin == data.end
@@ -120,15 +169,14 @@ class OptionalDateRangeSchema(BaseSchema):
 
 
 class UserSchema(BaseSchema):
-    """Username/API key Schema for API calls that require authentication"""
+    """Schema for username and API key"""
 
     username: str
     api_key: str
 
 
-# Schema defining the API Job status
 class JobInfo(BaseSchema):
-    """ACROSS API Job status information"""
+    """Schema for ACROSS API Job status"""
 
     jobnumber: Union[int, str, None] = None
     created: Optional[datetime] = None
@@ -136,13 +184,16 @@ class JobInfo(BaseSchema):
 
     @property
     def num_errors(self):
+        """Get the number of errors"""
         return len(self.errors)
 
     @property
     def num_warnings(self):
+        """Get the number of warnings"""
         return len(self.warnings)
 
     def __str__(self):
+        """Get the string representation of the status"""
         return f"{self.status}"
 
     def warning(self, warning):
@@ -151,30 +202,36 @@ class JobInfo(BaseSchema):
             self.warnings.append(warning)
 
 
-# Schema for Visibility Classes
 class VisWindow(DateRangeSchema):
+    """Schema for visibility window"""
+
     initial: str
     final: str
 
 
 class VisibilitySchema(BaseSchema):
+    """Schema for visibility entries"""
+
     entries: List[VisWindow]
     status: JobInfo
 
 
 class VisibilityGetSchema(CoordSchema, DateRangeSchema):
+    """Schema for getting visibility"""
+
     hires: Optional[bool] = True
 
 
-# Schema for TLE Class
 class TLEEntry(BaseSchema):
+    """Schema for TLE entry"""
+
     tle1: str = Field(min_length=69, max_length=69)
     tle2: str = Field(min_length=69, max_length=69)
 
     @computed_field  # type: ignore
     @property
     def epoch(self) -> datetime:
-        """Calculate Epoch of TLE"""
+        """Calculate the epoch of the TLE"""
         tleepoch = self.tle1.split()[3]
         year, dayofyear = int(f"20{tleepoch[0:2]}"), float(tleepoch[2:])
         fracday, dayofyear = np.modf(dayofyear)
@@ -185,34 +242,33 @@ class TLEEntry(BaseSchema):
 
 
 class TLESchema(BaseSchema):
+    """Schema for TLE"""
+
     tle: TLEEntry
 
 
-# SAA Schema
 class SAAEntry(DateRangeSchema):
-    """Simple class to hold a single SAA passage"""
+    """Schema for SAA passage"""
 
     @property
     def length(self) -> float:
+        """Get the length of the passage in seconds"""
         return (self.end - self.begin).total_seconds() / 86400
 
 
 class SAASchema(BaseSchema):
-    """Returns from thee SAA class"""
+    """Schema for SAA entries"""
 
     entries: List[SAAEntry]
     status: JobInfo
 
 
 class SAAGetSchema(DateRangeSchema):
-    """Schema defining required parameters for GET"""
-
-    pass
+    """Schema for getting SAA entries"""
 
 
-# Pointing Schemas
 class PointBase(BaseSchema):
-    """Schema defining a spacecraft pointing"""
+    """Schema for spacecraft pointing"""
 
     time: datetime
     ra: Optional[float] = None
@@ -223,33 +279,41 @@ class PointBase(BaseSchema):
 
 
 class PointingSchemaBase(BaseSchema):
+    """Schema for pointing entries"""
+
     entries: List[PointBase]
 
 
 class PointingGetSchemaBase(DateRangeSchema):
+    """Schema for getting pointing entries"""
+
     stepsize: int = 60
 
 
-# Plan Schema
 class PlanEntryBase(DateRangeSchema, CoordSchema):
+    """Schema for plan entry"""
+
     targname: str
     exposure: int
 
 
 class PlanGetSchemaBase(OptionalDateRangeSchema, OptionalCoordSchema):
+    """Schema for getting plan entries"""
+
     obsid: Union[str, int, None] = None
     radius: Optional[float] = None
 
 
 class PlanSchemaBase(BaseSchema):
+    """Schema for plan entries"""
+
     entries: List[PlanEntryBase]
     status: Optional[JobInfo] = None
 
 
-# Ephem Schema
-
-
 class EphemSchema(BaseSchema):
+    """Schema for ephemeris entries"""
+
     timestamp: List[datetime] = []
     posvec: List[List[float]]
     earthsize: List[float]
@@ -264,16 +328,14 @@ class EphemSchema(BaseSchema):
 
 
 class EphemGetSchema(DateRangeSchema):
-    """Schema to define required parameters for a GET"""
+    """Schema for getting ephemeris entries"""
 
     stepsize: int = 60
-    pass
-
-
-# Config Schema
 
 
 class MissionSchema(BaseSchema):
+    """Schema for mission information"""
+
     name: str
     shortname: str
     agency: str
@@ -284,6 +346,8 @@ class MissionSchema(BaseSchema):
 
 
 class FOVSchema(BaseSchema):
+    """Schema for field of view"""
+
     fovtype: str
     fovarea: float  # degrees**2
     fovparam: Union[str, float, None]
@@ -291,6 +355,8 @@ class FOVSchema(BaseSchema):
 
 
 class InstrumentSchema(BaseSchema):
+    """Schema for instrument information"""
+
     name: str
     shortname: str
     description: str
@@ -301,22 +367,28 @@ class InstrumentSchema(BaseSchema):
 
     @property
     def frequency_high(self):
+        """Get the high frequency of the instrument"""
         return ((self.energy_high * u.keV) / h).to(u.Hz)  # type: ignore
 
     @property
     def frequency_low(self):
+        """Get the low frequency of the instrument"""
         return ((self.energy_low * u.keV) / h).to(u.Hz)  # type: ignore
 
     @property
     def wavelength_high(self):
+        """Get the high wavelength of the instrument"""
         return c / self.frequency_low.to(u.nm)
 
     @property
     def wavelength_low(self):
+        """Get the low wavelength of the instrument"""
         return c / self.frequency_high.to(u.nm)
 
 
 class EphemConfigSchema(BaseSchema):
+    """Schema for ephemeris configuration"""
+
     parallax: bool
     apparent: bool
     velocity: bool
@@ -324,14 +396,14 @@ class EphemConfigSchema(BaseSchema):
 
 
 class VisibilityConfigSchema(BaseSchema):
-    # Constraint switches, set to True to calculate this constraint
+    """Schema for visibility configuration"""
+
     earth_cons: bool  # Calculate Earth Constraint
     moon_cons: bool  # Calculate Moon Constraint
     sun_cons: bool  # Calculate Sun Constraint
     ram_cons: bool  # Calculate Ram Constraint
-    pole_cons: bool  # Calcualte Orbit Pole Constraint
+    pole_cons: bool  # Calculate Orbit Pole Constraint
     saa_cons: bool  # Calculate time in SAA as a constraint
-    # Constraint avoidance values
     earthoccult: float  # How many degrees from Earth Limb can you look?
     moonoccult: float  # degrees from center of Moon
     sunoccult: float  # degrees from center of Sun
@@ -341,6 +413,8 @@ class VisibilityConfigSchema(BaseSchema):
 
 
 class TLEConfigSchema(BaseSchema):
+    """Schema for TLE configuration"""
+
     tle_bad: float
     tle_url: Optional[Url] = None
     tle_name: str
@@ -349,6 +423,8 @@ class TLEConfigSchema(BaseSchema):
 
 
 class ConfigSchema(BaseSchema):
+    """Schema for configuration"""
+
     mission: MissionSchema
     instruments: List[InstrumentSchema]
     ephem: EphemConfigSchema

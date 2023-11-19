@@ -17,7 +17,7 @@ def tablefy(table: list, header: Optional[list] = None) -> str:
     ----------
     table : list
         Data for table
-    header : list
+    header : list, optional
         Headers for table, by default None
 
     Returns
@@ -45,9 +45,9 @@ def tablefy(table: list, header: Optional[list] = None) -> str:
 
 
 # Regex for matching date, time and datetime strings
-_date_regex = r"^[0-2]\d{3}-(0?[1-9]|1[012])-([0][1-9]|[1-2][0-9]|3[0-1])?$"
-_iso8601_regex = r"^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$"
-_datetime_regex = r"^[0-2]\d{3}-(0?[1-9]|1[012])-([0][1-9]|[1-2][0-9]|3[0-1])[\sT]([0-9]:|[0-1][0-9]:|2[0-3]:)[0-5][0-9]:[0-5][0-9]+(\.\d+)?$"
+DATE_REGEX = r"^[0-2]\d{3}-(0?[1-9]|1[012])-([0][1-9]|[1-2][0-9]|3[0-1])?$"
+ISO8601_REGEX = r"^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$"
+DATETIME_REGEX = r"^[0-2]\d{3}-(0?[1-9]|1[012])-([0][1-9]|[1-2][0-9]|3[0-1])[\sT]([0-9]:|[0-1][0-9]:|2[0-3]:)[0-5][0-9]:[0-5][0-9]+(\.\d+)?$"
 
 
 def convert_timedelta(
@@ -57,17 +57,15 @@ def convert_timedelta(
 
     Parameters
     ----------
-    value : Any
+    length : Union[str, float, timedelta, TimeDelta, Quantity, None]
         Value to be converted.
-    unit : Quantity
-        Unit to use if float/int given. Default = days.
-    isutc : bool, optional
-        Is the value in UTC, by default False
+    units : astropy.units.Quantity, optional
+        Unit to use if float/int given. Default is days.
 
     Returns
     -------
-    datetime / swiftdatetime
-        Returned datetime / swiftdatetime object
+    datetime.timedelta
+        Returned timedelta object.
 
     Raises
     ------
@@ -100,13 +98,13 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
 
     Parameters
     ----------
-    value : varies
+    value : Union[str, date, datetime, Time]
         Value to be converted.
 
     Returns
     -------
-    datetime
-        Returned datetime object
+    datetime.datetime
+        Returned datetime object.
 
     Raises
     ------
@@ -114,7 +112,7 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
         Raised if incorrect format is given for conversion.
     """
     if type(value) is str or type(value) is np.str_:
-        if re.match(_datetime_regex, value):
+        if re.match(DATETIME_REGEX, value):
             # Remove the rogue T in 2023-10-17T00:00:00 style strings
             value = value.replace("T", " ")
             # Figure out if we have decimal places
@@ -124,9 +122,9 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
                 dtvalue = datetime.strptime(value, "%Y-%m-%d %H:%M:%S.%f")
             else:
                 dtvalue = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-        elif re.match(_date_regex, value):
+        elif re.match(DATE_REGEX, value):
             dtvalue = datetime.strptime(f"{value} 00:00:00", "%Y-%m-%d %H:%M:%S")
-        elif re.match(_iso8601_regex, value):
+        elif re.match(ISO8601_REGEX, value):
             dtvalue = parser.parse(value)
             if dtvalue.tzinfo is None:
                 warnings.warn(
