@@ -1,11 +1,9 @@
 import json
-from math import e
 import warnings
 from typing import Type
 from urllib.parse import urlencode
 
 import requests
-from zmq import has
 
 from ..constants import API_URL
 from ..functions import tablefy
