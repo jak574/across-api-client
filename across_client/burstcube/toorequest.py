@@ -31,6 +31,8 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         The ID of the trigger.
     trigger_time : datetime
         The time of the trigger.
+    trigger_duration : float
+        The duration of the trigger (s).
     justification : str
         The justification for the TOO request.
     ra : Optional[float]
@@ -76,6 +78,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     trigger_instrument: str
     trigger_id: str
     trigger_time: datetime
+    trigger_duration: Optional[float]
     justification: str
     ra: Optional[float]
     dec: Optional[float]
