@@ -6,6 +6,7 @@ from ..base.schema import (
     PlanEntryBase,
     PlanGetSchemaBase,
     PlanSchemaBase,
+    UserSchema,
     VisWindow,
 )
 
@@ -20,7 +21,7 @@ class NICERPlanGetSchema(PlanGetSchemaBase):
     pass
 
 
-class NICERPlanPutSchema(BaseSchema):
+class NICERPlanPutSchema(UserSchema):
     entries: List[NICERPlanEntry]
 
 

@@ -186,15 +186,32 @@ class ACROSSBase:
         Raises
         ------
         HTTPError
-            Raised if GET doesn't return a 201 response.
+            Raised if PUT doesn't return a 201 response.
         """
         if self.validate_put():
+            # Other non-file parameters
+            put_params = {
+                key: value
+                for key, value in self._put_schema.model_validate(self)
+                .model_dump()
+                .items()
+                if key != "entries"
+            }
+
+            # Extract any entries data, and upload this as JSON
+            if hasattr(self, "entries") and len(self.entries) > 0:
+                jsdata = json.loads(
+                    self._put_schema.model_validate(self).model_dump_json(
+                        include={"entries"}
+                    )
+                )
+            else:
+                jsdata = {}
+
             req = requests.put(
                 self.api_url,
-                params=self.arguments,
-                json=json.loads(
-                    self._put_schema.model_validate(self).model_dump_json()
-                ),
+                params=put_params,
+                json=jsdata,
                 timeout=60,
             )
             if req.status_code == 201:
@@ -219,7 +236,7 @@ class ACROSSBase:
         Raises
         ------
         HTTPError
-            Raised if GET doesn't return a 201 response.
+            Raised if POST doesn't return a 201 response.
         """
         if self.validate_post():
             # Extract any files out of the arguments
@@ -231,18 +248,22 @@ class ACROSSBase:
                 if type(value) is PosixPath
             }
 
-            # Other non-file parameters
+            # Extract query arguments
             post_params = {
                 key: value
                 for key, value in self._post_schema.model_validate(self)
                 .model_dump()
                 .items()
-                if type(value) is not PosixPath
+                if key != "entries" and type(value) is not PosixPath
             }
 
             # Extract any entries data, and upload this as JSON
             if hasattr(self, "entries") and len(self.entries) > 0:
-                jsdata = json.loads(json.dumps(self.entries, default=str))
+                jsdata = json.loads(
+                    self._post_schema.model_validate(self).model_dump_json(
+                        include={"entries"}
+                    )
+                )
             else:
                 jsdata = {}
 
