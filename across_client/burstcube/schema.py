@@ -93,10 +93,9 @@ class BurstCubeTOODelSchema(BaseSchema):
     id: int
 
 
-class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
+class BurstCubeTOOPostSchema(UserSchema, BurstCubeTOOCoordSchema):
     """Schema to create a BurstCubeTOO Request"""
 
-    username: str
     trigger_mission: str
     trigger_instrument: str
     trigger_id: str
