@@ -1,6 +1,8 @@
 from datetime import datetime
 from enum import Enum
+from pydantic import FilePath
 from typing import List, Optional
+
 
 from ..base.schema import (
     BaseSchema,
@@ -53,6 +55,7 @@ class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
     trigger_id: Optional[str] = None
     trigger_time: Optional[datetime] = None
     trigger_duration: Optional[float] = None
+    healpix_file: Optional[FilePath] = None
     classification: Optional[str] = None
     justification: Optional[str] = None
     begin: Optional[datetime] = None
@@ -61,6 +64,7 @@ class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
     offset: float = -50
     reason: TOOReason = TOOReason.none
     too_status: TOOStatus = TOOStatus.requested
+    too_info: str
 
 
 class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
@@ -93,12 +97,12 @@ class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
     """Schema to create a BurstCubeTOO Request"""
 
     username: str
-    timestamp: Optional[datetime] = None
     trigger_mission: str
     trigger_instrument: str
     trigger_id: str
     trigger_time: datetime
     trigger_duration: Optional[float] = None
+    healpix_file: Optional[FilePath] = None
     classification: Optional[str] = None
     justification: Optional[str] = None
     begin: Optional[datetime] = None
