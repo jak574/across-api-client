@@ -240,19 +240,25 @@ class ACROSSBase:
                 if type(value) is not PosixPath
             }
 
+            # Extract any entries data, and upload this as JSON
+            if hasattr(self, "entries") and len(self.entries) > 0:
+                jsdata = json.loads(json.dumps(self.entries, default=str))
+            else:
+                jsdata = {}
+
             if files == {}:
-                # If there are no files, we can upload JSON data
+                # If there are no files, we can upload self.entries as JSON data
                 req = requests.post(
                     self.api_url,
-                    params=self.arguments,
-                    json=json.loads(json.dumps(post_params, default=str)),
+                    params=post_params,
+                    json=jsdata,
                     timeout=60,
                 )
             else:
                 # Otherwise we need to use multipart/form-data for files, and pass the other parameters as query parameters
                 req = requests.post(
                     self.api_url,
-                    params=self.arguments | post_params,
+                    params=post_params,
                     files=files,
                     timeout=60,
                 )
