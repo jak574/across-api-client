@@ -241,10 +241,15 @@ class ACROSSBase:
         if self.validate_post():
             # Extract any files out of the arguments
             files = {
-                key: (value.name, value.open("rb"))
-                for key, value in self._post_schema.model_validate(self)
-                .model_dump()
-                .items()
+                key: (
+                    value.name,
+                    getattr(self, key.replace("file", "fh"))
+                    if hasattr(self, key.replace("file", "fh"))
+                    else value.open("rb"),
+                )
+                for key, value in self._post_schema.model_validate(
+                    self
+                )  # .model_dump().items()
                 if type(value) is PosixPath
             }
 
