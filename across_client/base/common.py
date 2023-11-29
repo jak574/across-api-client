@@ -88,7 +88,7 @@ class ACROSSBase:
         if self.validate_get():
             # Create an array of parameters from the schema
             get_params = {
-                key: value for key, value in self._del_schema.model_validate(self)
+                key: value for key, value in self._get_schema.model_validate(self)
             }
             # Do the GET request
             req = requests.get(self.api_url(get_params), params=get_params, timeout=60)
