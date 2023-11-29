@@ -26,6 +26,10 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
     Parameters:
     ----------
+    username : str
+        The username of the user making the TOO request.
+    api_key : str
+        The API key of the user making the TOO request.
     trigger_mission : str
         The mission associated with the TOO request.
     trigger_instrument : str
@@ -50,25 +54,26 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         The exposure time for the TOO observation.
     offset : float
         The offset for the TOO observation.
-    status : JobInfo
-        The status of the TOO request.
+    healpix_file : Optional[FilePath]
+        The healpix filename that represents the object localization for the TOO. This should be a file
+        on disk.
+    healpix_fh : Union[io.BytesIO, io.BufferedReader, None]
+        The healpix file handle for the TOO observation, takes a file like object.
 
     Attributes:
     ----------
-    _mission : str
-        The mission associated with the TOO request.
-    _api_name : str
-        The name of the API.
-    _schema : BurstCubeTOOSchema
-        The schema for the TOO request.
-    _put_schema : BurstCubeTOOPutSchema
-        The schema for updating the TOO request.
-    _post_schema : BurstCubeTOOPostSchema
-        The schema for creating a new TOO request.
-    _get_schema : BurstCubeTOOGetSchema
-        The schema for retrieving the TOO request.
-    _del_schema : BurstCubeTOOGetSchema
-        The schema for deleting the TOO request.
+    timestamp : datetime
+        The time at which the TOO request was made.
+    status : JobInfo
+        The status of the TOO request.
+    too_info : str
+        The TOO information, including warnings etc.
+    reason : str
+        The reason for the TOO request being rejected.
+    too_status : str
+        The status of the TOO request.
+    id : str
+        The ID of the TOO request.
 
     Methods:
     -------
