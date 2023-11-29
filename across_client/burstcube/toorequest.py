@@ -1,6 +1,9 @@
 from datetime import datetime
-from typing import Optional
 
+from typing import Optional, Union
+
+from pydantic import FilePath
+import io
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
@@ -79,7 +82,10 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     trigger_id: str
     trigger_time: datetime
     trigger_duration: Optional[float]
+    healpix_file: Optional[FilePath]
+    healpix_fh: Union[io.BytesIO, io.BufferedReader, None]
     justification: str
+    classification: Optional[str]
     ra: Optional[float]
     dec: Optional[float]
     begin: datetime
@@ -87,6 +93,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     exposure: float
     offset: float
     status: JobInfo
+    too_info: str
 
     # API definitions
 

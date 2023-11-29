@@ -1,10 +1,9 @@
 import json
+from pathlib import PosixPath
 import warnings
 from typing import Type
 from urllib.parse import urlencode
-
 import requests
-
 from ..constants import API_URL
 from ..functions import tablefy
 from .schema import BaseSchema, JobInfo
@@ -18,7 +17,7 @@ class ACROSSBase:
     # Type hints
     entries: list
     status: JobInfo
-
+    files: dict
     # API descriptors type hints
     _schema: Type[BaseSchema]
     _get_schema: Type[BaseSchema]
@@ -187,15 +186,32 @@ class ACROSSBase:
         Raises
         ------
         HTTPError
-            Raised if GET doesn't return a 201 response.
+            Raised if PUT doesn't return a 201 response.
         """
         if self.validate_put():
+            # Other non-file parameters
+            put_params = {
+                key: value
+                for key, value in self._put_schema.model_validate(self)
+                .model_dump()
+                .items()
+                if key != "entries"
+            }
+
+            # Extract any entries data, and upload this as JSON
+            if hasattr(self, "entries") and len(self.entries) > 0:
+                jsdata = json.loads(
+                    self._put_schema.model_validate(self).model_dump_json(
+                        include={"entries"}
+                    )
+                )
+            else:
+                jsdata = {}
+
             req = requests.put(
                 self.api_url,
-                params=self.arguments,
-                json=json.loads(
-                    self._put_schema.model_validate(self).model_dump_json()
-                ),
+                params=put_params,
+                json=jsdata,
                 timeout=60,
             )
             if req.status_code == 201:
@@ -220,17 +236,54 @@ class ACROSSBase:
         Raises
         ------
         HTTPError
-            Raised if GET doesn't return a 201 response.
+            Raised if POST doesn't return a 201 response.
         """
         if self.validate_post():
-            req = requests.post(
-                self.api_url,
-                params=self.arguments,
-                json=json.loads(
-                    self._post_schema.model_validate(self).model_dump_json()
-                ),
-                timeout=60,
-            )
+            # Extract any files out of the arguments
+            files = {
+                key: (value.name, value.open("rb"))
+                for key, value in self._post_schema.model_validate(self)
+                .model_dump()
+                .items()
+                if type(value) is PosixPath
+            }
+
+            # Extract query arguments
+            post_params = {
+                key: value
+                for key, value in self._post_schema.model_validate(self)
+                .model_dump()
+                .items()
+                if key != "entries" and type(value) is not PosixPath
+            }
+
+            # Extract any entries data, and upload this as JSON
+            if hasattr(self, "entries") and len(self.entries) > 0:
+                jsdata = json.loads(
+                    self._post_schema.model_validate(self).model_dump_json(
+                        include={"entries"}
+                    )
+                )
+            else:
+                jsdata = {}
+
+            if files == {}:
+                # If there are no files, we can upload self.entries as JSON data
+                req = requests.post(
+                    self.api_url,
+                    params=post_params,
+                    json=jsdata,
+                    timeout=60,
+                )
+            else:
+                # Otherwise we need to use multipart/form-data for files, and pass the other parameters as query parameters
+                req = requests.post(
+                    self.api_url,
+                    params=post_params,
+                    files=files,
+                    timeout=60,
+                )
+
             if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()):
