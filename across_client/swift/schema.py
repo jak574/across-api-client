@@ -110,7 +110,7 @@ class SwiftObservationsGetSchema(PlanGetSchemaBase):
     pass
 
 
-class SwiftObservationsPutSchema(BaseSchema):
+class SwiftObservationsPutSchema(UserSchema):
     entries: List[SwiftObsEntry]
     pass
 
