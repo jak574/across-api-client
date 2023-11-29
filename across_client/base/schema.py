@@ -183,18 +183,9 @@ class JobInfo(BaseSchema):
     warnings: List[str] = []
 
     @property
-    def num_errors(self):
-        """Get the number of errors"""
-        return len(self.errors)
-
-    @property
     def num_warnings(self):
         """Get the number of warnings"""
         return len(self.warnings)
-
-    def __str__(self):
-        """Get the string representation of the status"""
-        return f"{self.status}"
 
     def warning(self, warning):
         """Add a warning to the list of warnings"""
