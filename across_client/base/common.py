@@ -2,7 +2,6 @@ import json
 from pathlib import PosixPath
 import warnings
 from typing import Type
-from urllib.parse import urlencode
 import requests
 from ..constants import API_URL
 from ..functions import tablefy
@@ -17,7 +16,7 @@ class ACROSSBase:
     # Type hints
     entries: list
     status: JobInfo
-    files: dict
+
     # API descriptors type hints
     _schema: Type[BaseSchema]
     _get_schema: Type[BaseSchema]
@@ -31,8 +30,7 @@ class ACROSSBase:
     def __getitem__(self, i):
         return self.entries[i]
 
-    @property
-    def api_url(self) -> str:
+    def api_url(self, argdict) -> str:
         """
         URL for this API call.
 
@@ -41,50 +39,10 @@ class ACROSSBase:
         str
             URL for API call
         """
-        argdict = self.arguments
         # If arguments has `id` in it, then put this in the path
         if "id" in argdict.keys() and argdict["id"] is not None:
-            id = argdict.pop("id")
             return f"{API_URL}{self._mission}/{self._api_name}/{id}"
         return f"{API_URL}{self._mission}/{self._api_name}"
-
-    @property
-    def get_url(self) -> str:
-        """
-        Return URL for GET request.
-
-        Returns
-        -------
-        str
-            URL for GET API request
-        """
-        argdict = self.arguments
-        # If arguments has `id` in it, then put this in the path
-        if "id" in argdict.keys() and argdict["id"] is not None:
-            _ = argdict.pop("id")
-        return f"{self.api_url}?{urlencode(argdict)}"
-
-    @property
-    def arguments(self) -> dict:
-        """
-        Summary of validated arguments for API call.
-
-        Returns
-        -------
-        dict
-            Dictionary of arguments with values
-        """
-        # Send username/api_key if set
-        if hasattr(self, "username") and hasattr(self, "api_key"):
-            argdict = {"username": self.username, "api_key": self.api_key}
-        else:
-            argdict = {}
-
-        for k in self._get_schema.model_fields.keys():
-            if hasattr(self, k) and getattr(self, k) is not None:
-                argdict[k] = getattr(self, k)
-
-        return argdict
 
     @property
     def parameters(self) -> dict:
@@ -96,11 +54,7 @@ class ACROSSBase:
         dict
             Dictionary of parameters
         """
-        return {
-            k: v
-            for k, v in self._schema.model_validate(self).__dict__.items()
-            if v is not None
-        }
+        return {k: v for k, v in self._schema.model_validate(self) if v is not None}
 
     @parameters.setter
     def parameters(self, params: dict):
@@ -112,7 +66,7 @@ class ACROSSBase:
         params : dict
             Dictionary of class parameters
         """
-        for k, v in self._schema(**params).model_dump().items():
+        for k, v in self._schema(**params):
             if hasattr(self, k) and v is not None:
                 setattr(self, k, v)
 
@@ -132,7 +86,12 @@ class ACROSSBase:
             Raised if GET doesn't return a 200 response.
         """
         if self.validate_get():
-            req = requests.get(self.api_url, params=self.arguments, timeout=60)
+            # Create an array of parameters from the schema
+            get_params = {
+                key: value for key, value in self._del_schema.model_validate(self)
+            }
+            # Do the GET request
+            req = requests.get(self.api_url(get_params), params=get_params, timeout=60)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()):
@@ -162,7 +121,14 @@ class ACROSSBase:
             Raised if GET doesn't return a 200 response.
         """
         if self.validate_del():
-            req = requests.delete(self.api_url, params=self.arguments, timeout=60)
+            # Create an array of parameters from the schema
+            del_params = {
+                key: value for key, value in self._del_schema.model_validate(self)
+            }
+            # Do the DELETE request
+            req = requests.delete(
+                self.api_url(del_params), params=del_params, timeout=60
+            )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()):
@@ -193,8 +159,6 @@ class ACROSSBase:
             put_params = {
                 key: value
                 for key, value in self._put_schema.model_validate(self)
-                .model_dump()
-                .items()
                 if key != "entries"
             }
 
@@ -209,7 +173,7 @@ class ACROSSBase:
                 jsdata = {}
 
             req = requests.put(
-                self.api_url,
+                self.api_url(put_params),
                 params=put_params,
                 json=jsdata,
                 timeout=60,
@@ -247,9 +211,7 @@ class ACROSSBase:
                     if hasattr(self, key.replace("file", "fh"))
                     else value.open("rb"),
                 )
-                for key, value in self._post_schema.model_validate(
-                    self
-                )  # .model_dump().items()
+                for key, value in self._post_schema.model_validate(self)
                 if type(value) is PosixPath
             }
 
@@ -257,8 +219,6 @@ class ACROSSBase:
             post_params = {
                 key: value
                 for key, value in self._post_schema.model_validate(self)
-                .model_dump()
-                .items()
                 if key != "entries" and type(value) is not PosixPath
             }
 
@@ -275,7 +235,7 @@ class ACROSSBase:
             if files == {}:
                 # If there are no files, we can upload self.entries as JSON data
                 req = requests.post(
-                    self.api_url,
+                    self.api_url(post_params),
                     params=post_params,
                     json=jsdata,
                     timeout=60,
@@ -283,7 +243,7 @@ class ACROSSBase:
             else:
                 # Otherwise we need to use multipart/form-data for files, and pass the other parameters as query parameters
                 req = requests.post(
-                    self.api_url,
+                    self.api_url(post_params),
                     params=post_params,
                     files=files,
                     timeout=60,
@@ -393,7 +353,7 @@ class ACROSSBase:
                 _parameters = list(self.parameters.keys())
             else:
                 _parameters = []
-            _parameters += list(self.arguments.keys())
+            _parameters += list(self.parameters.keys())
             # Don't include username/api_key in table
             try:
                 _parameters.pop(_parameters.index("username"))
@@ -408,10 +368,7 @@ class ACROSSBase:
             table = []
             for row in _parameters:
                 value = getattr(self, row)
-                if row == "status" and not isinstance(value, str):
-                    table.append(value.status)
-                else:
-                    table.append(value)
+                table.append(value)
             table = [table]
         return header, table
 
@@ -432,5 +389,5 @@ class ACROSSBase:
     def __repr__(self) -> str:
         # print a string showing the API call and arguments with their values
         # in a way that can be copied and pasted into a script
-        args = ",".join([f"{k}={v}" for k, v in self.arguments.items()])
+        args = ",".join([f"{k}={v}" for k, v in self.parameters.items()])
         return f"{self.__class__.__name__}({args})"
