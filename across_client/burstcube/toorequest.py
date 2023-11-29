@@ -54,10 +54,10 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         The exposure time for the TOO observation.
     offset : float
         The offset for the TOO observation.
-    healpix_file : Optional[FilePath]
+    healpix_filename : Optional[FilePath]
         The healpix filename that represents the object localization for the TOO. This should be a file
         on disk.
-    healpix_fh : Union[io.BytesIO, io.BufferedReader, None]
+    healpix_file : Union[io.BytesIO, io.BufferedReader, None]
         The healpix file handle for the TOO observation, takes a file like object.
 
     Attributes:
@@ -87,8 +87,8 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     trigger_id: str
     trigger_time: datetime
     trigger_duration: Optional[float]
-    healpix_file: Optional[FilePath]
-    healpix_fh: Union[io.BytesIO, io.BufferedReader, None]
+    healpix_filename: Optional[FilePath]
+    healpix_file: Union[io.BytesIO, io.BufferedReader, None]
     justification: str
     classification: Optional[str]
     ra: Optional[float]

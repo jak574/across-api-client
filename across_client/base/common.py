@@ -206,9 +206,10 @@ class ACROSSBase:
             # Extract any files out of the arguments
             files = {
                 key: (
+                    # Return either the existing filelike object, or open the file
                     value.name,
-                    getattr(self, key.replace("file", "fh"))
-                    if hasattr(self, key.replace("file", "fh"))
+                    getattr(self, key.replace("filename", "file"))
+                    if hasattr(self, key.replace("filename", "file"))
                     else value.open("rb"),
                 )
                 for key, value in self._post_schema.model_validate(self)

@@ -55,7 +55,7 @@ class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
     trigger_id: Optional[str] = None
     trigger_time: Optional[datetime] = None
     trigger_duration: Optional[float] = None
-    healpix_file: Optional[FilePath] = None
+    healpix_filename: Optional[FilePath] = None
     classification: Optional[str] = None
     justification: Optional[str] = None
     begin: Optional[datetime] = None
@@ -101,7 +101,7 @@ class BurstCubeTOOPostSchema(UserSchema, BurstCubeTOOCoordSchema):
     trigger_id: str
     trigger_time: datetime
     trigger_duration: Optional[float] = None
-    healpix_file: Optional[FilePath] = None
+    healpix_filename: Optional[FilePath] = None
     classification: Optional[str] = None
     justification: Optional[str] = None
     begin: Optional[datetime] = None
