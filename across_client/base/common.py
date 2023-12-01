@@ -1,4 +1,3 @@
-import json
 from pathlib import PosixPath
 import warnings
 from typing import Type
@@ -164,11 +163,10 @@ class ACROSSBase:
 
             # Extract any entries data, and upload this as JSON
             if hasattr(self, "entries") and len(self.entries) > 0:
-                jsdata = json.loads(
-                    self._put_schema.model_validate(self).model_dump_json(
-                        include={"entries"}
-                    )
+                jsdata = self._put_schema.model_validate(self).model_dump(
+                    include={"entries"}, mode="json"
                 )
+
             else:
                 jsdata = {}
 
@@ -225,10 +223,8 @@ class ACROSSBase:
 
             # Extract any entries data, and upload this as JSON
             if hasattr(self, "entries") and len(self.entries) > 0:
-                jsdata = json.loads(
-                    self._post_schema.model_validate(self).model_dump_json(
-                        include={"entries"}
-                    )
+                jsdata = self._post_schema.model_validate(self).model_dump(
+                    include={"entries"}, mode="json"
                 )
             else:
                 jsdata = {}
