@@ -44,7 +44,13 @@ import astropy.units as u  # type: ignore
 import numpy as np
 from astropy.constants import c, h  # type: ignore
 from astropy.coordinates import SkyCoord  # type: ignore
-from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    computed_field,
+    model_validator,
+)
 from pydantic_core import Url
 
 from ..functions import convert_to_dt  # type: ignore
@@ -135,13 +141,25 @@ class DateRangeSchema(BaseSchema):
     begin: datetime
     end: datetime
 
+    @model_validator(mode="before")
+    @classmethod
+    def convert_date(cls, data: Any) -> datetime:
+        """Check if the begin and end dates are both set or both not set"""
+        if isinstance(data, dict):
+            for key in data.keys():
+                if key == "begin" or key == "end":
+                    data[key] = convert_to_dt(data[key])
+        else:
+            data.begin = convert_to_dt(data.begin)
+            data.end = convert_to_dt(data.end)
+        return data
+
     @model_validator(mode="after")
     @classmethod
     def check_dates(cls, data: Any) -> Any:
-        """Check if the end date is not before the begin date"""
-        data.end = convert_to_dt(data.end)
-        data.begin = convert_to_dt(data.begin)
-        assert data.begin <= data.end, "End date should not be before begin"
+        """Check if the begin and end dates are both set or both not set"""
+        assert data.begin <= data.end, "End date should not be before begin."
+
         return data
 
 
@@ -151,6 +169,19 @@ class OptionalDateRangeSchema(BaseSchema):
     begin: Optional[datetime] = None
     end: Optional[datetime] = None
 
+    @model_validator(mode="before")
+    @classmethod
+    def convert_date(cls, data: Any) -> datetime:
+        """Check if the begin and end dates are both set or both not set"""
+        if isinstance(data, dict):
+            for key in data.keys():
+                if key == "begin" or key == "end":
+                    data[key] = convert_to_dt(data[key])
+        else:
+            data.begin = convert_to_dt(data.begin)
+            data.end = convert_to_dt(data.end)
+        return data
+
     @model_validator(mode="after")
     @classmethod
     def check_dates(cls, data: Any) -> Any:
@@ -158,12 +189,8 @@ class OptionalDateRangeSchema(BaseSchema):
         if data.begin is None or data.end is None:
             assert (
                 data.begin == data.end
-            ), "Begin/End should both be set, or both not set"
-        else:
-            data.end = convert_to_dt(data.end)
-            data.begin = convert_to_dt(data.begin)
-        if data.begin != data.end:
-            assert data.begin <= data.end, "End date should not be before begin"
+            ), "Begin/End should both be set, or both not set."
+        assert data.begin <= data.end, "End date should not be before begin."
 
         return data
 
