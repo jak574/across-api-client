@@ -231,5 +231,6 @@ class TOORequests(ACROSSBase, ACROSSUser):
 
 # Alias
 BurstCubeTOO = TOO
+BurstCubeTOORequests = TOORequests
 submit_too = TOO.submit_too
 burstcube_submit_too = TOO.submit_too
