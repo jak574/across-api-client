@@ -61,6 +61,9 @@ class BurstCubeVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
         self.status = JobInfo()
         for k, a in kwargs.items():
             setattr(self, k, a)
+        # As this is a GET only class, we can validate and get the data
+        if self.validate_get():
+            self.get()
 
 
 # Alias
