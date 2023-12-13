@@ -115,7 +115,50 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         self.offset = -50
         self.status = JobInfo()
         for k, a in kwargs.items():
-            setattr(self, k, a)
+            if k in self._schema.model_fields.keys():
+                setattr(self, k, a)
+
+    @classmethod
+    def submit_too(cls, **kwargs):
+        """
+        Submit a TOO request.
+        """
+        cls.status = JobInfo()
+        for k, a in kwargs.items():
+            if k in cls._post_schema.model_fields.keys():
+                setattr(cls, k, a)
+            setattr(cls, k, a)
+        if cls.validate_post():
+            cls.post()
+
+    @property
+    def _table(self):
+        return (
+            [
+                "TOO ID",
+                "Submitted",
+                "Submitter",
+                "Trigger Time",
+                "Mission",
+                "Instrument",
+                "ID",
+                "Status",
+                "Reason"
+            ],
+            [
+                [
+                    self.id,
+                    self.timestamp,
+                    self.username,
+                    self.trigger_time,
+                    self.trigger_mission,
+                    self.trigger_instrument,
+                    self.trigger_id,
+                    self.too_status.value,
+                    self.reason.value,
+                ]
+            ],
+        )
 
 
 class TOORequests(ACROSSBase, ACROSSUser):
@@ -148,7 +191,45 @@ class TOORequests(ACROSSBase, ACROSSUser):
         self.entries = []
         for k, a in kwargs.items():
             setattr(self, k, a)
+        # As this is a GET only class, we can validate and get the data
+        if self.validate_get():
+            self.get()
+
+            # Convert the entries to a list of TOO objects
+            self.entries = [TOO(**entry.model_dump()) for entry in self.entries]
+
+    @property
+    def _table(self):
+        return (
+            [
+                "TOO ID",
+                "Submitted",
+                "Submitter",
+                "Trigger Time",
+                "Mission",
+                "Instrument",
+                "ID",
+                "Status",
+                "Reason"
+            ],
+            [
+                [
+                    entry.id,
+                    entry.timestamp,
+                    entry.username,
+                    entry.trigger_time,
+                    entry.trigger_mission,
+                    entry.trigger_instrument,
+                    entry.trigger_id,
+                    entry.too_status.value,
+                    entry.reason.value,
+                ]
+                for entry in self.entries
+            ],
+        )
 
 
 # Alias
 BurstCubeTOO = TOO
+submit_too = TOO.submit_too
+burstcube_submit_too = TOO.submit_too
