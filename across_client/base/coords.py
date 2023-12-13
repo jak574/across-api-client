@@ -2,6 +2,7 @@ from typing import Optional, Union
 
 from astropy.coordinates import Latitude, Longitude  # type: ignore
 from astropy.units import Quantity, deg  # type: ignore
+from astropy.coordinates import SkyCoord  # type: ignore
 
 
 def coord_convert(
@@ -28,3 +29,22 @@ def coord_convert(
         return coord.value
     # Universal translator
     return float(coord)
+
+
+class ACROSSSkyCoord:
+    ra: float
+    dec: float
+
+    @property
+    def skycoord(self) -> SkyCoord:
+        """Returns a string representation of the skycoord."""
+        if self.ra is None or self.dec is None:
+            return None
+        else:
+            return SkyCoord(self.ra, self.dec, unit="deg")
+
+    @skycoord.setter
+    def skycoord(self, coord: SkyCoord):
+        """Sets the ra and dec from a SkyCoord."""
+        self.ra = coord.icrs.ra.deg
+        self.dec = coord.icrs.dec.deg

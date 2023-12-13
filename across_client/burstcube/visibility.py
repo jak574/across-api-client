@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from ..base.coords import ACROSSSkyCoord
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
@@ -7,7 +8,7 @@ from ..base.schema import JobInfo, VisibilityGetSchema, VisibilitySchema
 from .constants import MISSION
 
 
-class BurstCubeVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
+class BurstCubeVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord):
     """
     Class representing the visibility of BurstCube.
 

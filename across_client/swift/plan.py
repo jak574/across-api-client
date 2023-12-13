@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from ..base.coords import ACROSSSkyCoord
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
@@ -14,7 +15,7 @@ from .schema import (
 )
 
 
-class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord):
     """
     SwiftPlan class represents a plan for the Swift mission.
 

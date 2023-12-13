@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from ..base.coords import ACROSSSkyCoord
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
@@ -7,7 +8,7 @@ from ..base.schema import JobInfo, VisibilityGetSchema, VisibilitySchema, VisWin
 from .constants import MISSION
 
 
-class SwiftVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
+class SwiftVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord):
     """
     Class representing the visibility of Swift objects.
 
@@ -63,6 +64,9 @@ class SwiftVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
     def __init__(self, **kwargs):
         self.status = JobInfo()
         [setattr(self, k, a) for k, a in kwargs.items()]
+        # As this is a GET only class, we can validate and get the data
+        if self.validate_get():
+            self.get()
 
 
 # Alias
