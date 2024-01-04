@@ -38,7 +38,6 @@ class SwiftFOVCheck(ACROSSBase, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoo
     _api_name = "FOVCheck"
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         self.entries = []
         for k, a in kwargs.items():
             setattr(self, k, a)

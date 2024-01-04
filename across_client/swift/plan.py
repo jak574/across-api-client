@@ -15,7 +15,9 @@ from .schema import (
 )
 
 
-class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord):
+class SwiftPlan(
+    ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord
+):
     """
     SwiftPlan class represents a plan for the Swift mission.
 
@@ -64,7 +66,6 @@ class SwiftPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACRO
     _api_name = "Plan"
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         self.entries = []
         for k, a in kwargs.items():
             setattr(self, k, a)

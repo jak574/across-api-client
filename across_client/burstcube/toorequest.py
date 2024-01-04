@@ -113,7 +113,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     def __init__(self, **kwargs):
         self.exposure = 200
         self.offset = -50
-        self.status = JobInfo()
+
         for k, a in kwargs.items():
             if k in self._schema.model_fields.keys():
                 setattr(self, k, a)
@@ -143,7 +143,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
                 "Instrument",
                 "ID",
                 "Status",
-                "Reason"
+                "Reason",
             ],
             [
                 [
@@ -187,7 +187,6 @@ class TOORequests(ACROSSBase, ACROSSUser):
     _get_schema = BurstCubeTOORequestsGetSchema
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         self.entries = []
         for k, a in kwargs.items():
             setattr(self, k, a)
@@ -210,7 +209,7 @@ class TOORequests(ACROSSBase, ACROSSUser):
                 "Instrument",
                 "ID",
                 "Status",
-                "Reason"
+                "Reason",
             ],
             [
                 [

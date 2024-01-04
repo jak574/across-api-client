@@ -61,7 +61,6 @@ class SwiftSAA(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
     _get_schema = SAAGetSchema
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         for k, a in kwargs.items():
             setattr(self, k, a)
         # As this is a GET only class, we can validate and get the data

@@ -16,7 +16,9 @@ from .schema import (
 )
 
 
-class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord):
+class SwiftObservations(
+    ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord
+):
     """
     Class representing Swift observations.
 
@@ -67,7 +69,6 @@ class SwiftObservations(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRan
     _api_name = "Observations"
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         self.entries = []
         for k, a in kwargs.items():
             setattr(self, k, a)

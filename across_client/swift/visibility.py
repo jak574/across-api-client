@@ -62,7 +62,6 @@ class SwiftVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange, ACROSSSkyC
     _get_schema = VisibilityGetSchema
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         [setattr(self, k, a) for k, a in kwargs.items()]
         # As this is a GET only class, we can validate and get the data
         if self.validate_get():

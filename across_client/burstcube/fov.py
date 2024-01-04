@@ -37,7 +37,6 @@ class BurstCubeFOVCheck(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
     _api_name = "FOVCheck"
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         self.entries = []
         for k, a in kwargs.items():
             setattr(self, k, a)

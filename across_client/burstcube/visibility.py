@@ -8,7 +8,9 @@ from ..base.schema import JobInfo, VisibilityGetSchema, VisibilitySchema
 from .constants import MISSION
 
 
-class BurstCubeVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord):
+class BurstCubeVisibility(
+    ACROSSBase, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord
+):
     """
     Class representing the visibility of BurstCube.
 
@@ -59,7 +61,6 @@ class BurstCubeVisibility(ACROSSBase, ACROSSResolveName, ACROSSDateRange, ACROSS
     _get_schema = VisibilityGetSchema
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         for k, a in kwargs.items():
             setattr(self, k, a)
         # As this is a GET only class, we can validate and get the data

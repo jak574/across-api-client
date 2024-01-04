@@ -35,7 +35,6 @@ class Resolve(ACROSSBase):
     _get_schema = ResolveGetSchema
 
     def __init__(self, name: Optional[str] = None, **kwargs):
-        self.status = JobInfo()
         self.name = name
         for k, a in kwargs.items():
             setattr(self, k, a)

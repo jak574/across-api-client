@@ -3,7 +3,7 @@ from datetime import datetime
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobInfo, EphemGetSchema, EphemSchema, VisWindow
+from ..base.schema import EphemGetSchema, EphemSchema, VisWindow
 from .constants import MISSION
 
 
@@ -55,7 +55,6 @@ class BurstCubeEphem(ACROSSBase, ACROSSResolveName, ACROSSDateRange):
     _get_schema = EphemGetSchema
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         for k, a in kwargs.items():
             setattr(self, k, a)
         # As this is a GET only class, we can validate and get the data

@@ -15,7 +15,9 @@ from .schema import (
 )
 
 
-class NICERPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord):
+class NICERPlan(
+    ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord
+):
     # Type hints
     ra: float
     dec: float
@@ -32,7 +34,6 @@ class NICERPlan(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACRO
     _api_name = "Plan"
 
     def __init__(self, **kwargs):
-        self.status = JobInfo()
         self.entries = []
         [setattr(self, k, a) for k, a in kwargs.items()]
 
