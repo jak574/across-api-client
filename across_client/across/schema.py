@@ -1,9 +1,9 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import model_validator
 
-from ..base.schema import BaseSchema, JobInfo
+from ..base.schema import BaseSchema
 
 
 class HelloSchema(BaseSchema):
@@ -12,7 +12,6 @@ class HelloSchema(BaseSchema):
     """
 
     hello: str
-    status: JobInfo
 
 
 class HelloGetSchema(BaseSchema):
@@ -31,7 +30,6 @@ class ResolveSchema(BaseSchema):
     ra: float
     dec: float
     resolver: str
-    status: JobInfo
 
 
 class ResolveGetSchema(BaseSchema):
@@ -63,11 +61,6 @@ class UserArgSchema(BaseSchema):
         if self.username != "anonymous" and self.api_key is None:
             raise ValueError("api_key required if username is set")
         return self
-
-
-class ACROSSAPIJobsSchema(BaseSchema):
-    entries: List[JobSchema]  # = fields.List(cls_or_instance=fields.Nested(JobSchema))
-    status: JobInfo  # = fields.Nested(JobInfoSchema)
 
 
 class ACROSSAPIJobsGetSchema(BaseSchema):

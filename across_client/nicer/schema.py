@@ -2,7 +2,6 @@ from typing import List
 
 from ..base.schema import (
     BaseSchema,
-    JobInfo,
     PlanEntryBase,
     PlanGetSchemaBase,
     PlanSchemaBase,
@@ -36,4 +35,3 @@ class NICERVisWindow(VisWindow):
 
 class NICERVisibilitySchema(BaseSchema):
     entries: List[NICERVisWindow]
-    status: JobInfo

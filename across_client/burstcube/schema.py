@@ -6,7 +6,6 @@ from typing import List, Optional
 
 from ..base.schema import (
     BaseSchema,
-    JobInfo,
     OptionalCoordSchema,
     PointBase,
     PointingGetSchemaBase,
@@ -113,8 +112,6 @@ class BurstCubeTOOPostSchema(UserSchema, BurstCubeTOOCoordSchema):
 class BurstCubeTOOSchema(BurstCubeTOOModelSchema):
     """Schema for the response to a BurstCubeTOO request."""
 
-    status: JobInfo
-
 
 class BurstCubePoint(PointBase):
     """BurstCube Point"""
@@ -143,7 +140,6 @@ class BurstCubeFOVCheckSchema(BaseSchema):
     """BurstCube FOV Check Schema"""
 
     entries: List[BurstCubePoint]
-    status: JobInfo
 
 
 class BurstCubeTOOGetSchema(BaseSchema):
@@ -171,4 +167,3 @@ class BurstCubeTOORequestsSchema(BaseSchema):
     """BurstCubeTOO Requests Schema"""
 
     entries: List[BurstCubeTOOModelSchema]
-    status: JobInfo

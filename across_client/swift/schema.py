@@ -3,7 +3,6 @@ from typing import List, Optional
 
 from ..base.schema import (
     BaseSchema,
-    JobInfo,
     PlanEntryBase,
     PlanGetSchemaBase,
     PlanSchemaBase,
@@ -153,4 +152,3 @@ class SwiftFOVCheckGetSchema(BaseSchema):
 
 class SwiftFOVCheckSchema(BaseSchema):
     entries: List[SwiftPoint]
-    status: JobInfo

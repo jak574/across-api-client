@@ -231,7 +231,6 @@ class VisibilitySchema(BaseSchema):
     """Schema for visibility entries"""
 
     entries: List[VisWindow]
-    status: JobInfo
 
 
 class VisibilityGetSchema(CoordSchema, DateRangeSchema):
@@ -278,7 +277,6 @@ class SAASchema(BaseSchema):
     """Schema for SAA entries"""
 
     entries: List[SAAEntry]
-    status: JobInfo
 
 
 class SAAGetSchema(DateRangeSchema):
@@ -342,7 +340,6 @@ class EphemSchema(BaseSchema):
     latitude: List[float]
     longitude: List[float]
     stepsize: int = 60
-    status: JobInfo
 
 
 class EphemGetSchema(DateRangeSchema):
