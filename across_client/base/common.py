@@ -91,6 +91,7 @@ class ACROSSBase:
                 key: value for key, value in self._get_schema.model_validate(self)
             }
             # Do the GET request
+            print(self.api_url(get_params), get_params)
             req = requests.get(self.api_url(get_params), params=get_params, timeout=60)
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON

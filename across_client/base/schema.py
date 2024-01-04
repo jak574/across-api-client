@@ -310,8 +310,8 @@ class EphemSchema(BaseSchema):
     earthsize: List[float]
     polevec: Optional[List[List[float]]] = None
     velvec: Optional[List[List[float]]] = None
-    sunvec: List[List[float]]
-    moonvec: List[List[float]]
+    sun: List[List[float]]
+    moon: List[List[float]]
     latitude: List[float]
     longitude: List[float]
     stepsize: int = 60

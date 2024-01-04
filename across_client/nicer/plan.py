@@ -1,42 +1,26 @@
-from datetime import datetime
-
-from ..across.resolve import ACROSSResolveName
-from ..base.common import ACROSSBase
-from ..base.coords import ACROSSSkyCoord
-from ..base.daterange import ACROSSDateRange
-from ..base.user import ACROSSUser
+from across_client.base.plan import PlanBase
 from .constants import MISSION
 from .schema import (
-    NICERPlanEntry,
-    NICERPlanGetSchema,
-    NICERPlanPutSchema,
-    NICERPlanSchema,
+    BurstCubePlanEntry,
+    BurstCubePlanGetSchema,
+    BurstCubePlanPutSchema,
+    BurstCubePlanSchema,
 )
 
 
-class NICERPlan(
-    ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange, ACROSSSkyCoord
-):
-    # Type hints
-    ra: float
-    dec: float
-    begin: datetime
-    end: datetime
-    hires: bool
-    entries: list
+class BurstCubePlan(PlanBase):
+    """
+    BurstCubePlan class represents a plan for the BurstCube mission.
+    """
 
     # API definitions
     _mission = MISSION
-    _schema = NICERPlanSchema
-    _put_schema = NICERPlanPutSchema
-    _get_schema = NICERPlanGetSchema
+    _schema = BurstCubePlanSchema
+    _put_schema = BurstCubePlanPutSchema
+    _get_schema = BurstCubePlanGetSchema
     _api_name = "Plan"
-
-    def __init__(self, **kwargs):
-        self.entries = []
-        [setattr(self, k, a) for k, a in kwargs.items()]
 
 
 # Alias
-Plan = NICERPlan
-PlanEntry = NICERPlanEntry
+Plan = BurstCubePlan
+PlanEntry = BurstCubePlanEntry
