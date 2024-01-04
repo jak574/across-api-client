@@ -40,8 +40,8 @@ class ACROSSBase:
         """
         # If arguments has `id` in it, then put this in the path
         if "id" in argdict.keys() and argdict["id"] is not None:
-            return f"{API_URL}{self._mission}/{self._api_name}/{id}"
-        return f"{API_URL}{self._mission}/{self._api_name}"
+            return f"{API_URL}{self._mission.lower()}/{self._api_name.lower()}/{id}"
+        return f"{API_URL}{self._mission.lower()}/{self._api_name.lower()}"
 
     @property
     def parameters(self) -> dict:
