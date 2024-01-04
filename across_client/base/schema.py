@@ -202,24 +202,6 @@ class UserSchema(BaseSchema):
     api_key: str
 
 
-class JobInfo(BaseSchema):
-    """Schema for ACROSS API Job status"""
-
-    created: Optional[datetime] = None
-    expires: Optional[datetime] = None
-    warnings: List[str] = []
-
-    @property
-    def num_warnings(self):
-        """Get the number of warnings"""
-        return len(self.warnings)
-
-    def warning(self, warning):
-        """Add a warning to the list of warnings"""
-        if warning not in self.warnings:
-            self.warnings.append(warning)
-
-
 class VisWindow(DateRangeSchema):
     """Schema for visibility window"""
 
@@ -324,7 +306,6 @@ class PlanSchemaBase(BaseSchema):
     """Schema for plan entries"""
 
     entries: List[PlanEntryBase]
-    status: Optional[JobInfo] = None
 
 
 class EphemSchema(BaseSchema):

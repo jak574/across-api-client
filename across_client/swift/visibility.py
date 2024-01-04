@@ -4,7 +4,7 @@ from ..base.coords import ACROSSSkyCoord
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobInfo, VisibilityGetSchema, VisibilitySchema, VisWindow
+from ..base.schema import VisibilityGetSchema, VisibilitySchema, VisWindow
 from .constants import MISSION
 
 

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from ..base.common import ACROSSBase
-from .schema import JobInfo, ResolveGetSchema, ResolveSchema
+from .schema import ResolveGetSchema, ResolveSchema
 
 
 class Resolve(ACROSSBase):

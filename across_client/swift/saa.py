@@ -3,7 +3,7 @@ from datetime import datetime
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobInfo, SAAGetSchema, SAASchema, VisWindow
+from ..base.schema import SAAGetSchema, SAASchema, VisWindow
 from .constants import MISSION
 
 

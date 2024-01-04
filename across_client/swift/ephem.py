@@ -3,7 +3,7 @@ from datetime import datetime
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobInfo, EphemGetSchema, EphemSchema, VisWindow
+from ..base.schema import EphemGetSchema, EphemSchema, VisWindow
 from .constants import MISSION
 
 
