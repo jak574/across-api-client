@@ -1,26 +1,26 @@
 from across_client.base.plan import PlanBase
 from .constants import MISSION
 from .schema import (
-    BurstCubePlanEntry,
-    BurstCubePlanGetSchema,
-    BurstCubePlanPutSchema,
-    BurstCubePlanSchema,
+    NICERPlanEntry,
+    NICERPlanGetSchema,
+    NICERPlanPutSchema,
+    NICERPlanSchema,
 )
 
 
-class BurstCubePlan(PlanBase):
+class NICERPlan(PlanBase):
     """
-    BurstCubePlan class represents a plan for the BurstCube mission.
+    NICERPlan class represents a plan for the NICER mission.
     """
 
     # API definitions
     _mission = MISSION
-    _schema = BurstCubePlanSchema
-    _put_schema = BurstCubePlanPutSchema
-    _get_schema = BurstCubePlanGetSchema
+    _schema = NICERPlanSchema
+    _put_schema = NICERPlanPutSchema
+    _get_schema = NICERPlanGetSchema
     _api_name = "Plan"
 
 
 # Alias
-Plan = BurstCubePlan
-PlanEntry = BurstCubePlanEntry
+Plan = NICERPlan
+PlanEntry = NICERPlanEntry
