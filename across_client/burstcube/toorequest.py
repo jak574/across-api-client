@@ -7,7 +7,6 @@ from pydantic import FilePath
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobInfo
 from ..base.user import ACROSSUser
 from .constants import MISSION
 from .schema import (
@@ -64,8 +63,6 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     ----------
     timestamp : datetime
         The time at which the TOO request was made.
-    status : JobInfo
-        The status of the TOO request.
     too_info : str
         The TOO information, including warnings etc.
     reason : str
@@ -123,7 +120,6 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         """
         Submit a TOO request.
         """
-        cls.status = JobInfo()
         for k, a in kwargs.items():
             if k in cls._post_schema.model_fields.keys():
                 setattr(cls, k, a)
@@ -177,8 +173,6 @@ class TOORequests(ACROSSBase, ACROSSUser):
         The time at which the observation should be triggered.
     entries : list
         The list of entries for the observation.
-    status : JobInfo
-        The status of the observation.
     """
 
     _mission = MISSION

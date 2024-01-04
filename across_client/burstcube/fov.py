@@ -3,7 +3,6 @@ from datetime import datetime
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
-from ..base.schema import JobInfo
 from .constants import MISSION
 from .schema import BurstCubeFOVCheckGetSchema, BurstCubeFOVCheckSchema
 
