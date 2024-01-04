@@ -1,9 +1,9 @@
+import io
 from datetime import datetime
-
 from typing import Optional, Union
 
 from pydantic import FilePath
-import io
+
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
@@ -97,7 +97,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     end: datetime
     exposure: float
     offset: float
-    status: JobInfo
+
     too_info: str
 
     # API definitions

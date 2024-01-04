@@ -44,13 +44,7 @@ import astropy.units as u  # type: ignore
 import numpy as np
 from astropy.constants import c, h  # type: ignore
 from astropy.coordinates import SkyCoord  # type: ignore
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    computed_field,
-    model_validator,
-)
+from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 from pydantic_core import Url
 
 from ..functions import convert_to_dt  # type: ignore

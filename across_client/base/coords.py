@@ -1,8 +1,8 @@
 from typing import Optional, Union
 
+from astropy.coordinates import SkyCoord  # type: ignore
 from astropy.coordinates import Latitude, Longitude  # type: ignore
 from astropy.units import Quantity, deg  # type: ignore
-from astropy.coordinates import SkyCoord  # type: ignore
 
 
 def coord_convert(

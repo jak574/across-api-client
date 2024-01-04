@@ -18,8 +18,6 @@ class Resolve(ACROSSBase):
         The declination of the celestial object.
     resolver : Optional[str]
         The resolver used for resolving the coordinates.
-    status : JobInfo
-        The status of the resolver job.
     """
 
     # Type hints
@@ -27,7 +25,6 @@ class Resolve(ACROSSBase):
     ra: Optional[float] = None
     dec: Optional[float] = None
     resolver: Optional[str] = None
-    status: JobInfo
 
     _mission = "ACROSS"
     _api_name = "Resolve"

@@ -1,8 +1,8 @@
 from datetime import datetime
 from enum import Enum
-from pydantic import FilePath
 from typing import List, Optional
 
+from pydantic import FilePath
 
 from ..base.schema import (
     BaseSchema,

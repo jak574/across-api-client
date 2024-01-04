@@ -1,10 +1,12 @@
-from pathlib import PosixPath
 import warnings
+from pathlib import PosixPath
 from typing import Type
+
 import requests
+
 from ..constants import API_URL
 from ..functions import tablefy
-from .schema import BaseSchema, JobInfo
+from .schema import BaseSchema
 
 
 class ACROSSBase:
@@ -14,7 +16,6 @@ class ACROSSBase:
 
     # Type hints
     entries: list
-    status: JobInfo
 
     # API descriptors type hints
     _schema: Type[BaseSchema]
