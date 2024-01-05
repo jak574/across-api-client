@@ -43,10 +43,10 @@ class BurstCubeTOOCoordSchema(OptionalCoordSchema):
     error: Optional[float] = None
 
 
-class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
+class BurstCubeTOOSchema(BurstCubeTOOCoordSchema):
     """Schema to retrieve all information about a BurstCubeTOO Request"""
 
-    id: Optional[int] = None
+    id: Optional[str] = None
     username: str
     timestamp: Optional[datetime] = None
     trigger_mission: Optional[str] = None
@@ -69,7 +69,7 @@ class BurstCubeTOOModelSchema(BurstCubeTOOCoordSchema):
 class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
     """Schema to update a BurstCubeTOO Request"""
 
-    id: Optional[int] = None
+    id: Optional[str] = None
     username: str
     timestamp: Optional[datetime] = None
     trigger_mission: Optional[str] = None
@@ -89,7 +89,7 @@ class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
 class BurstCubeTOODelSchema(BaseSchema):
     """Schema to delete a BurstCubeTOO Request"""
 
-    id: int
+    id: str
 
 
 class BurstCubeTOOPostSchema(UserSchema, BurstCubeTOOCoordSchema):
@@ -107,10 +107,6 @@ class BurstCubeTOOPostSchema(UserSchema, BurstCubeTOOCoordSchema):
     end: Optional[datetime] = None
     exposure: float = 200
     offset: float = -50
-
-
-class BurstCubeTOOSchema(BurstCubeTOOModelSchema):
-    """Schema for the response to a BurstCubeTOO request."""
 
 
 class BurstCubePoint(PointBase):
@@ -166,4 +162,4 @@ class BurstCubeTOORequestsGetSchema(UserSchema):
 class BurstCubeTOORequestsSchema(BaseSchema):
     """BurstCubeTOO Requests Schema"""
 
-    entries: List[BurstCubeTOOModelSchema]
+    entries: List[BurstCubeTOOSchema]

@@ -114,6 +114,8 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         for k, a in kwargs.items():
             if k in self._schema.model_fields.keys():
                 setattr(self, k, a)
+        if "api_key" in kwargs.keys():
+            self.api_key = kwargs["api_key"]
 
     @classmethod
     def submit_too(cls, **kwargs):
