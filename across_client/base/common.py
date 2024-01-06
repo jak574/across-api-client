@@ -1,6 +1,7 @@
 import warnings
 from pathlib import PosixPath
 from typing import Type
+from arrow import get
 
 import requests
 
@@ -41,7 +42,7 @@ class ACROSSBase:
         """
         # If arguments has `id` in it, then put this in the path
         if "id" in argdict.keys() and argdict["id"] is not None:
-            return f"{API_URL}{self._mission.lower()}/{self._api_name.lower()}/{id}"
+            return f"{API_URL}{self._mission.lower()}/{self._api_name.lower()}/{argdict['id']}"
         return f"{API_URL}{self._mission.lower()}/{self._api_name.lower()}"
 
     @property
