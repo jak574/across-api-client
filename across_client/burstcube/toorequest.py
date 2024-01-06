@@ -108,6 +108,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _del_schema = BurstCubeTOOGetSchema
 
     def __init__(self, **kwargs):
+        self.id = None
         self.exposure = 200
         self.offset = -50
 
