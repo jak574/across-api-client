@@ -1,6 +1,6 @@
 import warnings
 from pathlib import PosixPath
-from typing import Type
+from typing import Any, Type
 
 import requests
 
@@ -43,6 +43,17 @@ class ACROSSBase:
         if "id" in argdict.keys() and argdict["id"] is not None:
             return f"{API_URL}{self._mission.lower()}/{self._api_name.lower()}/{argdict['id']}"
         return f"{API_URL}{self._mission.lower()}/{self._api_name.lower()}"
+
+    @property
+    def schema(self) -> Any:
+        """Return pydantic schema for this API class
+
+        Returns
+        -------
+        object
+            Pydantic Schema
+        """
+        return self._schema.model_validate(self)
 
     @property
     def parameters(self) -> dict:
@@ -139,7 +150,7 @@ class ACROSSBase:
                 req.raise_for_status()
         return False
 
-    def put(self) -> bool:
+    def put(self, payload={}) -> bool:
         """
         Perform a 'PUT' submission to ACROSS API. Used for pushing/replacing
         information.
@@ -162,17 +173,22 @@ class ACROSSBase:
                 if key != "entries"
             }
 
+            # URL for this API call
+            api_url = self.api_url(put_params)
+            put_params.pop("id")  # Remove id from query parameters
+
             # Extract any entries data, and upload this as JSON
             if hasattr(self, "entries") and len(self.entries) > 0:
                 jsdata = self._put_schema.model_validate(self).model_dump(
                     include={"entries"}, mode="json"
                 )
-
+            # Or else pass any specific payload
             else:
-                jsdata = {}
+                jsdata = payload
 
+            # Make PUT request
             req = requests.put(
-                self.api_url(put_params),
+                api_url,
                 params=put_params,
                 json=jsdata,
                 timeout=60,
@@ -183,6 +199,7 @@ class ACROSSBase:
                     setattr(self, k, v)
                 return True
             else:
+                print("ERROR: ", req.status_code, req.json())
                 req.raise_for_status()
         return False
 

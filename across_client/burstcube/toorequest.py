@@ -129,6 +129,12 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         if cls.validate_post():
             cls.post()
 
+    def put(self):
+        """
+        Update a TOO request.
+        """
+        super().put(payload=self.schema.model_dump(mode="json"))
+
     @property
     def _table(self):
         return (

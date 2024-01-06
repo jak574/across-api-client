@@ -66,23 +66,8 @@ class BurstCubeTOOSchema(BurstCubeTOOCoordSchema):
     too_info: str
 
 
-class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema, UserSchema):
-    """Schema to update a BurstCubeTOO Request"""
-
-    id: Optional[str] = None
-    timestamp: Optional[datetime] = None
-    trigger_mission: Optional[str] = None
-    trigger_instrument: Optional[str] = None
-    trigger_id: Optional[str] = None
-    trigger_time: Optional[datetime] = None
-    trigger_duration: Optional[float] = None
-    classification: Optional[str] = None
-    begin: Optional[datetime] = None
-    end: Optional[datetime] = None
-    exposure: Optional[float] = None
-    offset: Optional[float] = None
-    reason: TOOReason = TOOReason.none
-    too_status: TOOStatus = TOOStatus.requested
+class BurstCubeTOOPutSchema(UserSchema):
+    id: str
 
 
 class BurstCubeTOODelSchema(BaseSchema):
