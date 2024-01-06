@@ -62,7 +62,7 @@ class BurstCubeTOOSchema(BurstCubeTOOCoordSchema):
     exposure: float = 200
     offset: float = -50
     reason: TOOReason = TOOReason.none
-    too_status: TOOStatus = TOOStatus.requested
+    status: TOOStatus = TOOStatus.requested
     too_info: str
 
 

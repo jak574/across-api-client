@@ -67,7 +67,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         The TOO information, including warnings etc.
     reason : str
         The reason for the TOO request being rejected.
-    too_status : str
+    status : str
         The status of the TOO request.
     id : str
         The ID of the TOO request.
@@ -158,7 +158,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
                     self.trigger_mission,
                     self.trigger_instrument,
                     self.trigger_id,
-                    self.too_status.value,
+                    self.status.value,
                     self.reason.value,
                 ]
             ],
@@ -222,7 +222,7 @@ class TOORequests(ACROSSBase, ACROSSUser):
                     entry.trigger_mission,
                     entry.trigger_instrument,
                     entry.trigger_id,
-                    entry.too_status.value,
+                    entry.status.value,
                     entry.reason.value,
                 ]
                 for entry in self.entries
