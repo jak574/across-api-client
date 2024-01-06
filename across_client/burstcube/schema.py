@@ -66,11 +66,10 @@ class BurstCubeTOOSchema(BurstCubeTOOCoordSchema):
     too_info: str
 
 
-class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema):
+class BurstCubeTOOPutSchema(BurstCubeTOOCoordSchema, UserSchema):
     """Schema to update a BurstCubeTOO Request"""
 
     id: Optional[str] = None
-    username: str
     timestamp: Optional[datetime] = None
     trigger_mission: Optional[str] = None
     trigger_instrument: Optional[str] = None
@@ -138,10 +137,10 @@ class BurstCubeFOVCheckSchema(BaseSchema):
     entries: List[BurstCubePoint]
 
 
-class BurstCubeTOOGetSchema(BaseSchema):
+class BurstCubeTOOGetSchema(UserSchema):
     """BurstCubeTOO Get Schema"""
 
-    id: int
+    id: str
 
 
 class BurstCubeTOORequestsGetSchema(UserSchema):
