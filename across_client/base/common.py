@@ -1,7 +1,6 @@
 import warnings
 from pathlib import PosixPath
 from typing import Type
-from arrow import get
 
 import requests
 
