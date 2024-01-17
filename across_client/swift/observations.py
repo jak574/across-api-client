@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from ..base.schema import PlanGetSchema
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.coords import ACROSSSkyCoord
@@ -8,7 +9,6 @@ from ..base.user import ACROSSUser
 from .constants import MISSION
 from .schema import (
     SwiftObsEntry,
-    SwiftObservationsGetSchema,
     SwiftObservationsPutSchema,
     SwiftObservationsSchema,
 )
@@ -63,7 +63,7 @@ class SwiftObservations(
     _mission = MISSION
     _schema = SwiftObservationsSchema
     _put_schema = SwiftObservationsPutSchema
-    _get_schema = SwiftObservationsGetSchema
+    _get_schema = PlanGetSchema
     _api_name = "Observations"
 
     def __init__(self, **kwargs):
