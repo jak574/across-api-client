@@ -175,7 +175,8 @@ class ACROSSBase:
 
             # URL for this API call
             api_url = self.api_url(put_params)
-            put_params.pop("id")  # Remove id from query parameters
+            if "id" in put_params.keys():
+                put_params.pop("id")  # Remove id from query parameters
 
             # Extract any entries data, and upload this as JSON
             if hasattr(self, "entries") and len(self.entries) > 0:
