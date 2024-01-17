@@ -4,7 +4,6 @@ from typing import List, Optional
 from ..base.schema import (
     BaseSchema,
     PlanEntryBase,
-    PlanGetSchemaBase,
     PlanSchemaBase,
     PointBase,
     PointingGetSchemaBase,
@@ -36,10 +35,6 @@ class SwiftPlanEntry(PlanEntryBase):
     uvotmode: int
     batmode: int
     merit: int
-
-
-class SwiftPlanGetSchema(PlanGetSchemaBase):
-    pass
 
 
 class SwiftPlanPutSchema(UserSchema):
@@ -103,10 +98,6 @@ class SwiftObsEntry(PlanEntryBase):
     uvotmode: int
     batmode: int
     merit: int
-
-
-class SwiftObservationsGetSchema(PlanGetSchemaBase):
-    pass
 
 
 class SwiftObservationsPutSchema(UserSchema):

@@ -289,7 +289,7 @@ class PlanEntryBase(DateRangeSchema, CoordSchema):
     exposure: int
 
 
-class PlanGetSchemaBase(OptionalDateRangeSchema, OptionalCoordSchema):
+class PlanGetSchema(OptionalDateRangeSchema, OptionalCoordSchema):
     """Schema for getting plan entries"""
 
     obsid: Union[str, int, None] = None

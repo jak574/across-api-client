@@ -3,7 +3,6 @@ from typing import List
 from ..base.schema import (
     BaseSchema,
     PlanEntryBase,
-    PlanGetSchemaBase,
     PlanSchemaBase,
     UserSchema,
     VisWindow,
@@ -14,10 +13,6 @@ class NICERPlanEntry(PlanEntryBase):
     targetid: int
     obsid: int
     mode: str
-
-
-class NICERPlanGetSchema(PlanGetSchemaBase):
-    pass
 
 
 class NICERPlanPutSchema(UserSchema):

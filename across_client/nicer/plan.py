@@ -1,8 +1,8 @@
 from across_client.base.plan import PlanBase
+from across_client.base.schema import PlanGetSchema
 from .constants import MISSION
 from .schema import (
     NICERPlanEntry,
-    NICERPlanGetSchema,
     NICERPlanPutSchema,
     NICERPlanSchema,
 )
@@ -17,7 +17,7 @@ class NICERPlan(PlanBase):
     _mission = MISSION
     _schema = NICERPlanSchema
     _put_schema = NICERPlanPutSchema
-    _get_schema = NICERPlanGetSchema
+    _get_schema = PlanGetSchema
     _api_name = "Plan"
 
 
