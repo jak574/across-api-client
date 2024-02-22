@@ -1,16 +1,14 @@
 from datetime import datetime
 from enum import Enum
+import json
 from typing import List, Optional
 
-from pydantic import FilePath
+from pydantic import model_validator
 
 from ..base.schema import (
     BaseSchema,
     OptionalCoordSchema,
-    PointBase,
-    PointingGetSchemaBase,
-    PointingSchemaBase,
-    UserSchema,
+    OptionalDateRangeSchema,
 )
 
 
@@ -43,107 +41,192 @@ class BurstCubeTOOCoordSchema(OptionalCoordSchema):
     error: Optional[float] = None
 
 
-class BurstCubeTOOSchema(BurstCubeTOOCoordSchema):
-    """Schema to retrieve all information about a BurstCubeTOO Request"""
+class BurstCubeTriggerInfo(BaseSchema):
+    """
+    Metadata schema for the BurstCube Target of Opportunity (TOO) request. Note
+    that this schema is not strictly defined, keys are only suggested, and
+    additional keys can be added as needed.
+    """
 
-    id: Optional[str] = None
-    username: str
-    timestamp: Optional[datetime] = None
+    trigger_name: Optional[str] = None
     trigger_mission: Optional[str] = None
     trigger_instrument: Optional[str] = None
     trigger_id: Optional[str] = None
-    trigger_time: Optional[datetime] = None
     trigger_duration: Optional[float] = None
-    healpix_filename: Optional[FilePath] = None
     classification: Optional[str] = None
     justification: Optional[str] = None
-    begin: Optional[datetime] = None
-    end: Optional[datetime] = None
-    exposure: float = 200
-    offset: float = -50
-    reason: TOOReason = TOOReason.none
+
+    class Config:
+        extra = "allow"
+
+    @model_validator(mode="before")
+    def convert_json_string_to_dict(cls, data):
+        if isinstance(data, str):
+            return json.loads(data)
+        return data
+
+
+class BurstCubeTOOSchema(BurstCubeTOOCoordSchema):
+    """
+    Schema to retrieve all information about a BurstCubeTOO Request
+
+    Parameters
+    ----------
+    id : Optional[int], optional
+        The ID of the BurstCubeTOO Request, by default None
+    created_by : str
+        The username associated with the BurstCubeTOO Request
+    created_on : Optional[datetime], optional
+        The timestamp of the BurstCubeTOO Request, by default None
+    modified_by : Optional[str], optional
+        The username associated with the last modification of the BurstCubeTOO
+        Request, by default None
+    modified_on : Optional[datetime], optional
+        The timestamp of the last modification of the BurstCubeTOO Request, by
+        default None
+    trigger_time : datetime
+        The time of the trigger
+    trigger_info
+        Metadata about the trigger encoded as a Dict, with BurstCubeTriggerInfo as
+        a suggested, but not enforced, schema
+    exposure : float, optional
+        The exposure time for the BurstCubeTOO observation, by default 200
+    offset : float, optional
+        The offset from `trigger_time` for when the BurstCubeTOO data should
+        begin, by default -50
+    reason : TOOReason, optional
+        The reason for the BurstCubeTOO Request, by default TOOReason.none
+    status : TOOStatus, optional
+        The status of the BurstCubeTOO Request, by default TOOStatus.requested
+    too_info : str, optional
+        Additional information about the BurstCubeTOO Request, by default ""
+    """
+
+    id: Optional[str] = None
+    created_by: str
+    created_on: datetime
+    modified_by: Optional[str] = None
+    modified_on: Optional[datetime] = None
+    trigger_time: datetime
+    trigger_info: BurstCubeTriggerInfo
+    exposure: datetime
+    offset: datetime
+    reject_reason: TOOReason = TOOReason.none
     status: TOOStatus = TOOStatus.requested
-    too_info: str
-
-
-class BurstCubeTOOPutSchema(UserSchema):
-    id: str
+    too_info: str = ""
 
 
 class BurstCubeTOODelSchema(BaseSchema):
-    """Schema to delete a BurstCubeTOO Request"""
+    """
+    Schema for BurstCubeTOO DELETE API call.
+
+    Attributes
+    ----------
+    id : int
+        The ID of the BurstCubeTOODel object.
+    """
 
     id: str
 
 
-class BurstCubeTOOPostSchema(UserSchema, BurstCubeTOOCoordSchema):
-    """Schema to create a BurstCubeTOO Request"""
+class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
+    """
+    Schema to submit a TOO request for BurstCube.
 
-    trigger_mission: str
-    trigger_instrument: str
-    trigger_id: str
+    Parameters
+    ----------
+    trigger_mission : str
+        The mission associated with the trigger.
+    trigger_instrument : str
+        The instrument associated with the trigger.
+    trigger_id : str
+        The ID of the trigger.
+    trigger_time : datetime
+        The time of the trigger.
+    trigger_duration : float, optional
+        The duration of the trigger, default is 0.
+    classification : str, optional
+        The classification of the trigger, default is None.
+    justification : str, optional
+        The justification for the trigger, default is None.
+    begin : datetime, optional
+        The beginning time of the trigger, default is None.
+    end : datetime, optional
+        The end time of the trigger, default is None.
+    exposure : float, optional
+        The exposure time, default is 200.
+    offset : float, optional
+        The offset value, default is -50.
+    """
+
     trigger_time: datetime
-    trigger_duration: Optional[float] = None
-    healpix_filename: Optional[FilePath] = None
-    classification: Optional[str] = None
-    justification: Optional[str] = None
-    begin: Optional[datetime] = None
-    end: Optional[datetime] = None
-    exposure: float = 200
-    offset: float = -50
+    trigger_info: BurstCubeTriggerInfo
+    exposure: int = 200
+    offset: int = -50
 
 
-class BurstCubePoint(PointBase):
-    """BurstCube Point"""
+class BurstCubeTOOGetSchema(BaseSchema):
+    """
+    Schema for BurstCubeTOO GET request.
 
-
-class BurstCubePointingSchema(PointingSchemaBase):
-    """BurstCube Pointing Schema"""
-
-
-class BurstCubePointingGetSchema(PointingGetSchemaBase):
-    """BurstCube Pointing Get Schema"""
-
-
-class BurstCubeFOVCheckGetSchema(BaseSchema):
-    """BurstCube FOV Check Get Schema"""
-
-    ra: float
-    dec: float
-    begin: datetime
-    end: datetime
-    stepsize: int = 60
-    earthoccult: bool = True
-
-
-class BurstCubeFOVCheckSchema(BaseSchema):
-    """BurstCube FOV Check Schema"""
-
-    entries: List[BurstCubePoint]
-
-
-class BurstCubeTOOGetSchema(UserSchema):
-    """BurstCubeTOO Get Schema"""
+    Parameters
+    ----------
+    id : int
+        The ID of the BurstCube TOO.
+    """
 
     id: str
 
 
-class BurstCubeTOORequestsGetSchema(UserSchema):
-    """BurstCubeTOO Requests Get Schema"""
+class BurstCubeTOOPutSchema(BaseSchema):
+    """
+    Schema for BurstCubeTOO GET request.
 
-    begin: Optional[datetime] = None
-    end: Optional[datetime] = None
-    trigger_time: Optional[datetime] = None
-    trigger_mission: Optional[str] = None
-    trigger_instrument: Optional[str] = None
-    trigger_id: Optional[str] = None
+    Parameters
+    ----------
+    id : int
+        The ID of the BurstCube TOO.
+    """
+
+    id: str
+
+
+class BurstCubeTOORequestsGetSchema(OptionalDateRangeSchema):
+    """
+    Schema for GET requests to retrieve BurstCube Target of Opportunity (TOO) requests.
+
+    Parameters:
+    -----------
+    begin
+        The start time of the TOO requests.
+    end
+        The end time of the TOO requests.
+    limit
+        The maximum number of TOO requests to retrieve.
+    """
+
+    length: Optional[float] = None
     limit: Optional[int] = None
-    ra: Optional[float] = None
-    dec: Optional[float] = None
-    radius: Optional[float] = None
+
+    @model_validator(mode="after")
+    def check_begin_and_end_or_length_set(self):
+        if self.begin is not None and self.end is not None and self.length is not None:
+            raise ValueError("Cannot set both begin and end and length.")
+        elif self.begin is not None and self.length is not None:
+            self.end = self.begin + self.length
+        elif self.begin is None and self.end is None and self.length is not None:
+            self.end = datetime.utcnow()
+            self.begin = self.end - self.length
 
 
 class BurstCubeTOORequestsSchema(BaseSchema):
-    """BurstCubeTOO Requests Schema"""
+    """
+    Schema for BurstCube TOO requests.
+
+    Attributes
+    ----------
+    entries
+        List of BurstCube TOOs.
+    """
 
     entries: List[BurstCubeTOOSchema]
