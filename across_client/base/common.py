@@ -187,7 +187,7 @@ class ACROSSBase:
         if self.validate_put():
             # Extract any files out of the arguments
             files: Dict[str, Tuple[Optional[str], Any, str]] = {
-                key: (
+                key.replace("filename", "file"): (
                     # Return either the existing filelike object, or open the file
                     value.name,
                     getattr(self, key.replace("filename", "file"))
@@ -258,7 +258,7 @@ class ACROSSBase:
         if self.validate_post():
             # Extract any files out of the arguments
             files: Dict[str, Tuple[Optional[str], Any, str]] = {
-                key: (
+                key.replace("filename", "file"): (
                     # Return either the existing filelike object, or open the file
                     value.name,
                     getattr(self, key.replace("filename", "file"))
