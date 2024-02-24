@@ -4,6 +4,8 @@ from typing import Optional, Union
 
 from pydantic import FilePath
 
+from across_client.base.schema import AuthToken
+
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
 from ..base.daterange import ACROSSDateRange
@@ -16,6 +18,7 @@ from .schema import (
     BurstCubeTOORequestsGetSchema,
     BurstCubeTOORequestsSchema,
     BurstCubeTOOSchema,
+    BurstCubeTriggerInfo,
 )
 
 
@@ -25,22 +28,10 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
     Parameters:
     ----------
-    username : str
-        The username of the user making the TOO request.
-    api_key : str
-        The API key of the user making the TOO request.
-    trigger_mission : str
-        The mission associated with the TOO request.
-    trigger_instrument : str
-        The instrument associated with the TOO request.
-    trigger_id : str
-        The ID of the trigger.
+    credential: AuthToken
+        The credential for login obtained from the get_credential function.
     trigger_time : datetime
         The time of the trigger.
-    trigger_duration : float
-        The duration of the trigger (s).
-    justification : str
-        The justification for the TOO request.
     ra : Optional[float]
         The right ascension of the target (optional).
     dec : Optional[float]
@@ -58,6 +49,8 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         on disk.
     healpix_file : Union[io.BytesIO, io.BufferedReader, None]
         The healpix file handle for the TOO observation, takes a file like object.
+    trigger_info : BurstCubeTriggerInfo
+        The trigger information for the TOO observation.
 
     Attributes:
     ----------
@@ -79,23 +72,19 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
 
     """
 
-    trigger_mission: str
-    trigger_instrument: str
-    trigger_id: str
     trigger_time: datetime
-    trigger_duration: Optional[float]
     healpix_filename: Optional[FilePath]
     healpix_file: Union[io.BytesIO, io.BufferedReader, None]
-    justification: str
-    classification: Optional[str]
+
     ra: Optional[float]
     dec: Optional[float]
     begin: datetime
     end: datetime
     exposure: float
     offset: float
-
     too_info: str
+    trigger_info: BurstCubeTriggerInfo
+    credential: Optional[AuthToken]
 
     # API definitions
 
@@ -115,8 +104,8 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         for k, a in kwargs.items():
             if k in self._schema.model_fields.keys():
                 setattr(self, k, a)
-        if "api_key" in kwargs.keys():
-            self.api_key = kwargs["api_key"]
+        if "credential" in kwargs.keys():
+            self.credential = kwargs["credential"]
 
     @classmethod
     def submit_too(cls, **kwargs):
@@ -129,12 +118,6 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
             setattr(cls, k, a)
         if cls.validate_post():
             cls.post()
-
-    def put(self):
-        """
-        Update a TOO request.
-        """
-        super().put(payload=self.schema.model_dump(mode="json"))
 
     @property
     def _table(self):
