@@ -1,6 +1,7 @@
+import json
 import warnings
 from pathlib import PosixPath
-from typing import Any, Type
+from typing import Any, Dict, Optional, Tuple, Type
 
 import requests
 
@@ -81,6 +82,15 @@ class ACROSSBase:
             if hasattr(self, k) and v is not None:
                 setattr(self, k, v)
 
+    @property
+    def headers(self) -> dict:
+        # If we have a credential, then use this to authenticate
+        if hasattr(self, "credential"):
+            headers = {"Authorization": f"Bearer {self.credential.access_token}"}
+        else:
+            headers = {}
+        return headers
+
     def get(self) -> bool:
         """
         Perform a 'GET' submission to ACROSS API. Used for fetching
@@ -102,7 +112,12 @@ class ACROSSBase:
                 key: value for key, value in self._get_schema.model_validate(self)
             }
             # Do the GET request
-            req = requests.get(self.api_url(get_params), params=get_params, timeout=60)
+            req = requests.get(
+                self.api_url(get_params),
+                params=get_params,
+                headers=self.headers,
+                timeout=60,
+            )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()):
@@ -138,7 +153,10 @@ class ACROSSBase:
             }
             # Do the DELETE request
             req = requests.delete(
-                self.api_url(del_params), params=del_params, timeout=60
+                self.api_url(del_params),
+                params=del_params,
+                headers=self.headers,
+                timeout=60,
             )
             if req.status_code == 200:
                 # Parse, validate and record values from returned API JSON
@@ -165,12 +183,32 @@ class ACROSSBase:
         HTTPError
             Raised if PUT doesn't return a 201 response.
         """
+
         if self.validate_put():
-            # Other non-file parameters
-            put_params = {
-                key: value
+            # Extract any files out of the arguments
+            files: Dict[str, Tuple[Optional[str], Any, str]] = {
+                key: (
+                    # Return either the existing filelike object, or open the file
+                    value.name,
+                    getattr(self, key.replace("filename", "file"))
+                    if hasattr(self, key.replace("filename", "file"))
+                    else value.open("rb"),
+                    "application/octet-stream",
+                )
                 for key, value in self._put_schema.model_validate(self)
-                if key != "entries"
+                if type(value) is PosixPath
+            }
+
+            # Extract all POST parameters from the schema
+            all_params = self._put_schema.model_validate(self).model_dump(
+                mode="json", exclude_none=True
+            )
+
+            # Extract query parameters
+            put_params = {
+                k: all_params[k]
+                for k in all_params
+                if not isinstance(all_params[k], dict)
             }
 
             # URL for this API call
@@ -178,22 +216,20 @@ class ACROSSBase:
             if "id" in put_params.keys():
                 put_params.pop("id")  # Remove id from query parameters
 
-            # Extract any entries data, and upload this as JSON
-            if hasattr(self, "entries") and len(self.entries) > 0:
-                jsdata = self._put_schema.model_validate(self).model_dump(
-                    include={"entries"}, mode="json"
-                )
-            # Or else pass any specific payload
-            else:
-                jsdata = payload
+            # Add any json data to files
+            for k in all_params:
+                if isinstance(all_params[k], dict):
+                    files[k] = (None, json.dumps(all_params[k]), "application/json")
 
-            # Make PUT request
+            # Submit request
             req = requests.put(
                 api_url,
                 params=put_params,
-                json=jsdata,
+                headers=self.headers,
+                files=files,
                 timeout=60,
             )
+
             if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
                 for k, v in self._schema.model_validate(req.json()):
@@ -221,51 +257,44 @@ class ACROSSBase:
         """
         if self.validate_post():
             # Extract any files out of the arguments
-            files = {
+            files: Dict[str, Tuple[Optional[str], Any, str]] = {
                 key: (
                     # Return either the existing filelike object, or open the file
                     value.name,
-                    (
-                        getattr(self, key.replace("filename", "file"))
-                        if hasattr(self, key.replace("filename", "file"))
-                        else value.open("rb")
-                    ),
+                    getattr(self, key.replace("filename", "file"))
+                    if hasattr(self, key.replace("filename", "file"))
+                    else value.open("rb"),
+                    "application/octet-stream",
                 )
                 for key, value in self._post_schema.model_validate(self)
                 if type(value) is PosixPath
             }
 
-            # Extract query arguments
+            # Extract all POST parameters from the schema
+            all_params = self._post_schema.model_validate(self).model_dump(
+                mode="json", exclude_none=True
+            )
+
+            # Extract query parameters
             post_params = {
-                key: value
-                for key, value in self._post_schema.model_validate(self)
-                if key != "entries" and type(value) is not PosixPath
+                k: all_params[k]
+                for k in all_params
+                if not isinstance(all_params[k], dict)
             }
 
-            # Extract any entries data, and upload this as JSON
-            if hasattr(self, "entries") and len(self.entries) > 0:
-                jsdata = self._post_schema.model_validate(self).model_dump(
-                    include={"entries"}, mode="json"
-                )
-            else:
-                jsdata = {}
+            # Add any json data to files
+            for k in all_params:
+                if isinstance(all_params[k], dict):
+                    files[k] = (None, json.dumps(all_params[k]), "application/json")
 
-            if files == {}:
-                # If there are no files, we can upload self.entries as JSON data
-                req = requests.post(
-                    self.api_url(post_params),
-                    params=post_params,
-                    json=jsdata,
-                    timeout=60,
-                )
-            else:
-                # Otherwise we need to use multipart/form-data for files, and pass the other parameters as query parameters
-                req = requests.post(
-                    self.api_url(post_params),
-                    params=post_params,
-                    files=files,
-                    timeout=60,
-                )
+            # Submit request
+            req = requests.post(
+                self.api_url(post_params),
+                params=post_params,
+                headers=self.headers,
+                files=files,
+                timeout=60,
+            )
 
             if req.status_code == 201:
                 # Parse, validate and record values from returned API JSON
@@ -372,10 +401,10 @@ class ACROSSBase:
             else:
                 _parameters = []
             _parameters += list(self.parameters.keys())
-            # Don't include username/api_key in table
+            # Don't include client_id/client_secret in table
             try:
-                _parameters.pop(_parameters.index("username"))
-                _parameters.pop(_parameters.index("api_key"))
+                _parameters.pop(_parameters.index("client_id"))
+                _parameters.pop(_parameters.index("client_secret"))
             except ValueError:
                 pass
 
