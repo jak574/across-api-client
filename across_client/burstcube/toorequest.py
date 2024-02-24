@@ -136,14 +136,14 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
             [
                 [
                     self.id,
-                    self.timestamp,
-                    self.username,
+                    self.created_on,
+                    self.created_by,
                     self.trigger_time,
-                    self.trigger_mission,
-                    self.trigger_instrument,
-                    self.trigger_id,
+                    self.trigger_info.trigger_mission,
+                    self.trigger_info.trigger_instrument,
+                    self.trigger_info.trigger_id,
                     self.status.value,
-                    self.reason.value,
+                    self.reject_reason.value,
                 ]
             ],
         )
