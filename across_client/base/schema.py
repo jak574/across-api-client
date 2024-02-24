@@ -37,6 +37,7 @@ The module includes the following schemas:
 - TLEConfigSchema: Schema for TLE configuration.
 - ConfigSchema: Schema for configuration.
 """
+
 from datetime import datetime
 from typing import Any, Optional
 
@@ -182,4 +183,16 @@ class OptionalDateRangeSchema(BaseSchema):
             ), "Begin/End should both be set, or both not set."
         assert data.begin <= data.end, "End date should not be before begin."
 
+        return data
+
+
+class AuthToken(BaseSchema):
+    access_token: str
+    token_type: str
+    expires_in: int
+    expires_at: datetime
+
+    @model_validator(mode="before")
+    def set_expires_at(cls, data, validator):
+        data["expires_at"] = datetime.fromtimestamp(data["expires_at"])
         return data
