@@ -3,7 +3,7 @@ from enum import Enum
 import json
 from typing import List, Optional
 
-from pydantic import model_validator
+from pydantic import FilePath, model_validator
 
 from ..base.schema import (
     BaseSchema,
@@ -114,6 +114,7 @@ class BurstCubeTOOSchema(BurstCubeTOOCoordSchema):
     reject_reason: TOOReason = TOOReason.none
     status: TOOStatus = TOOStatus.requested
     too_info: str = ""
+    healpix_filename: Optional[FilePath] = None
 
 
 class BurstCubeTOODelSchema(BaseSchema):
@@ -135,20 +136,10 @@ class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
 
     Parameters
     ----------
-    trigger_mission : str
-        The mission associated with the trigger.
-    trigger_instrument : str
-        The instrument associated with the trigger.
-    trigger_id : str
-        The ID of the trigger.
     trigger_time : datetime
         The time of the trigger.
-    trigger_duration : float, optional
-        The duration of the trigger, default is 0.
-    classification : str, optional
-        The classification of the trigger, default is None.
-    justification : str, optional
-        The justification for the trigger, default is None.
+    trigger_info : BurstCubeTriggerInfo
+        Metadata about the trigger.
     begin : datetime, optional
         The beginning time of the trigger, default is None.
     end : datetime, optional
@@ -157,12 +148,15 @@ class BurstCubeTOOPostSchema(BurstCubeTOOCoordSchema):
         The exposure time, default is 200.
     offset : float, optional
         The offset value, default is -50.
+    healpix_filename : Optional[FilePath], optional
+        The filename of the healpix file, default is None.
     """
 
     trigger_time: datetime
     trigger_info: BurstCubeTriggerInfo
     exposure: int = 200
     offset: int = -50
+    healpix_filename: Optional[FilePath] = None
 
 
 class BurstCubeTOOGetSchema(BaseSchema):
@@ -178,7 +172,7 @@ class BurstCubeTOOGetSchema(BaseSchema):
     id: str
 
 
-class BurstCubeTOOPutSchema(BaseSchema):
+class BurstCubeTOOPutSchema(BurstCubeTOOPostSchema):
     """
     Schema for BurstCubeTOO GET request.
 
