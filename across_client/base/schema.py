@@ -192,7 +192,12 @@ class AuthToken(BaseSchema):
     expires_in: int
     expires_at: datetime
 
+    @property
+    def is_expired(self) -> bool:
+        """Check if the token is expired"""
+        return datetime.utcnow() > self.expires_at
+
     @model_validator(mode="before")
     def set_expires_at(cls, data, validator):
-        data["expires_at"] = datetime.fromtimestamp(data["expires_at"])
+        data["expires_at"] = datetime.utcfromtimestamp(data["expires_at"])
         return data
