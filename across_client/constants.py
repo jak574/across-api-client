@@ -6,3 +6,4 @@ API_URL: str
 """
 
 API_URL = "http://localhost:3333/labs/api/v1/"
+# API_URL = "https://dev.gcn.nasa.gov/labs/api/v1/"

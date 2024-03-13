@@ -153,18 +153,8 @@ class BurstCubeTOORequestsGetSchema(OptionalDateRangeSchema):
     Schema for GET requests to retrieve BurstCube Target of Opportunity (TOO) requests.
     """
 
-    length: Optional[float] = None
+    duration: Optional[float] = None
     limit: Optional[int] = None
-
-    @model_validator(mode="after")
-    def check_begin_and_end_or_length_set(self):
-        if self.begin is not None and self.end is not None and self.length is not None:
-            raise ValueError("Cannot set both begin and end and length.")
-        elif self.begin is not None and self.length is not None:
-            self.end = self.begin + self.length
-        elif self.begin is None and self.end is None and self.length is not None:
-            self.end = datetime.utcnow()
-            self.begin = self.end - self.length
 
 
 class BurstCubeTOORequestsSchema(BaseSchema):

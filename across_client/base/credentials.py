@@ -3,7 +3,7 @@ from authlib.integrations.httpx_client import OAuth2Client  # type: ignore
 from ..base.schema import AuthToken
 
 
-TOKEN_ENDPOINT = "https://auth.gcn.nasa.gov/oauth2/token"
+TOKEN_ENDPOINT = "https://auth.dev.gcn.nasa.gov/oauth2/token"
 
 
 class Authentication:

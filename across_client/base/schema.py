@@ -45,12 +45,6 @@ class CoordSchema(BaseSchema):
         return SkyCoord(self.ra, self.dec, unit="deg")
 
 
-class OptionalPositionSchema(CoordSchema):
-    """Schema that defines position with error"""
-
-    error_radius: Optional[float] = None
-
-
 class OptionalCoordSchema(BaseSchema):
     """Schema that defines optional RA/Dec"""
 
@@ -84,6 +78,12 @@ class OptionalCoordSchema(BaseSchema):
         if self.ra is not None and self.dec is not None:
             return SkyCoord(self.ra, self.dec, unit="deg")
         return None
+
+
+class OptionalPositionSchema(OptionalCoordSchema):
+    """Schema that defines position with error"""
+
+    error_radius: Optional[float] = None
 
 
 class DateRangeSchema(BaseSchema):
@@ -141,7 +141,8 @@ class OptionalDateRangeSchema(BaseSchema):
             assert (
                 data.begin == data.end
             ), "Begin/End should both be set, or both not set."
-        assert data.begin <= data.end, "End date should not be before begin."
+        if data.begin is not None and data.end is not None:
+            assert data.begin <= data.end, "End date should not be before begin."
 
         return data
 

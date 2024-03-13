@@ -93,7 +93,7 @@ def convert_timedelta(
     return timedelta(days=length)  # type: ignore
 
 
-def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
+def convert_to_dt(value: Union[str, date, datetime, Time]) -> Optional[datetime]:
     """Convert various date formats to datetime
 
     Parameters
@@ -111,6 +111,9 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
     TypeError
         Raised if incorrect format is given for conversion.
     """
+    if value is None:
+        return None
+
     if isinstance(value, (str, np.str_)):
         if re.match(DATETIME_REGEX, value):
             # Remove the rogue T in 2023-10-17T00:00:00 style strings

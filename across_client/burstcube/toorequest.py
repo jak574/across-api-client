@@ -115,7 +115,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         for k, a in kwargs.items():
             if k in cls._post_schema.model_fields.keys():
                 setattr(cls, k, a)
-            setattr(cls, k, a)
+
         if cls.validate_post():
             cls.post()
 
@@ -168,20 +168,25 @@ class TOORequests(ACROSSBase, ACROSSUser):
     """
 
     _mission = MISSION
-    _api_name = "TOORequests"
+    _api_name = "TOO"
     _schema = BurstCubeTOORequestsSchema
     _get_schema = BurstCubeTOORequestsGetSchema
 
     def __init__(self, **kwargs):
         self.entries = []
+        self.begin = None
+        self.end = None
+        self.limit = None
         for k, a in kwargs.items():
-            setattr(self, k, a)
+            if k in self._get_schema.model_fields.keys():
+                setattr(self, k, a)
+
         # As this is a GET only class, we can validate and get the data
         if self.validate_get():
             self.get()
 
-            # Convert the entries to a list of TOO objects
-            self.entries = [TOO(**entry.model_dump()) for entry in self.entries]
+        # Convert the entries to a list of TOO objects
+        # self.entries = [TOO(**entry.model_dump()) for entry in self.entries]
 
     @property
     def _table(self):
@@ -200,14 +205,14 @@ class TOORequests(ACROSSBase, ACROSSUser):
             [
                 [
                     entry.id,
-                    entry.timestamp,
-                    entry.username,
+                    entry.created_on,
+                    entry.created_by,
                     entry.trigger_time,
-                    entry.trigger_mission,
-                    entry.trigger_instrument,
-                    entry.trigger_id,
+                    entry.trigger_info.trigger_mission,
+                    entry.trigger_info.trigger_instrument,
+                    entry.trigger_info.trigger_id,
                     entry.status.value,
-                    entry.reason.value,
+                    entry.reject_reason.value,
                 ]
                 for entry in self.entries
             ],
