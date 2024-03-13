@@ -6,7 +6,7 @@ from astropy.units import Quantity, deg  # type: ignore
 
 
 def coord_convert(
-    coord: Union[float, int, str, Quantity, Longitude, None]
+    coord: Union[float, int, str, Quantity, Longitude, None],
 ) -> Optional[float]:
     """Convert coordinates of various types either string, integer,
     astropy Longitude or astropy "deg" unit, to a float.

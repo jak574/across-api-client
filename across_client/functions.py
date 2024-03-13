@@ -111,7 +111,7 @@ def convert_to_dt(value: Union[str, date, datetime, Time]) -> datetime:
     TypeError
         Raised if incorrect format is given for conversion.
     """
-    if type(value) is str or type(value) is np.str_:
+    if isinstance(value, (str, np.str_)):
         if re.match(DATETIME_REGEX, value):
             # Remove the rogue T in 2023-10-17T00:00:00 style strings
             value = value.replace("T", " ")
