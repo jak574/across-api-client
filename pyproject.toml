@@ -33,7 +33,9 @@ dependencies = [ # Optional
   "pydantic",
   "astropy",
   "python-dateutil",
-  "authlib"
+  "authlib",
+  "types-python-dateutil",
+  "types-requests"
 ]
 
 [project.optional-dependencies] # Optional
