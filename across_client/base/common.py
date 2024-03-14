@@ -260,19 +260,33 @@ class ACROSSBase:
         if self.validate_post():
             # Extract any files out of the arguments
             files: Dict[str, Tuple[Optional[str], Any, str]] = {
-                key.replace("filename", "file"): (
-                    # Return either the existing filelike object, or open the file
-                    value.name,
-                    (
-                        getattr(self, key.replace("filename", "file"))
-                        if hasattr(self, key.replace("filename", "file"))
-                        else value.open("rb")
-                    ),
+                key: (
+                    PosixPath(getattr(self, key + "name")).name,
+                    open(getattr(self, key + "name"), "rb"),
+                    "application/octet-stream",
+                )
+                if getattr(self, key) is None
+                and getattr(self, key + "name") is not None
+                else (
+                    PosixPath(getattr(self, key).name).name,
+                    getattr(self, key),
                     "application/octet-stream",
                 )
                 for key, value in self._post_schema.model_validate(self)
-                if type(value) is PosixPath
+                if "_file" in key
             }
+
+            # If files are gzipped, then set the content type to
+            # application/x-gzip
+            for key in files:
+                filename = files[key][0]
+                if isinstance(filename, str):
+                    if ".gz" in filename:
+                        files[key] = (
+                            files[key][0],
+                            files[key][1],
+                            "application/x-gzip",
+                        )
 
             # Extract all POST parameters from the schema
             all_params = self._post_schema.model_validate(self).model_dump(
@@ -290,7 +304,6 @@ class ACROSSBase:
             for k in all_params:
                 if isinstance(all_params[k], dict):
                     files[k] = (None, json.dumps(all_params[k]), "application/json")
-
             # Submit request
             req = requests.post(
                 self.api_url(post_params),
@@ -310,6 +323,7 @@ class ACROSSBase:
                 return False
             else:
                 # Raise an exception if the HTML response was not 200
+                # print(req.json())
                 req.raise_for_status()
         return False
 

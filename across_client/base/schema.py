@@ -11,7 +11,7 @@ from .coords import coord_convert  # type: ignore
 class BaseSchema(BaseModel):
     """Base schema for all other schemas"""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
 
     @property
     def _table(self):

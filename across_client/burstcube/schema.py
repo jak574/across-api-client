@@ -1,8 +1,9 @@
 from datetime import datetime
 from enum import Enum
+from io import IOBase
 from typing import List, Optional
 
-from pydantic import ConfigDict, FilePath  # type: ignore
+from pydantic import ConfigDict  # type: ignore
 
 from ..base.schema import BaseSchema, OptionalDateRangeSchema, OptionalPositionSchema
 
@@ -125,7 +126,7 @@ class BurstCubeTOOPostSchema(OptionalPositionSchema):
     trigger_info: BurstCubeTriggerInfo
     exposure: int = 200
     offset: int = -50
-    healpix_filename: Optional[FilePath] = None
+    healpix_file: Optional[IOBase] = None
 
 
 class BurstCubeTOOGetSchema(BaseSchema):
