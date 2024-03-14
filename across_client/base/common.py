@@ -190,9 +190,11 @@ class ACROSSBase:
                 key.replace("filename", "file"): (
                     # Return either the existing filelike object, or open the file
                     value.name,
-                    getattr(self, key.replace("filename", "file"))
-                    if hasattr(self, key.replace("filename", "file"))
-                    else value.open("rb"),
+                    (
+                        getattr(self, key.replace("filename", "file"))
+                        if hasattr(self, key.replace("filename", "file"))
+                        else value.open("rb")
+                    ),
                     "application/octet-stream",
                 )
                 for key, value in self._put_schema.model_validate(self)
@@ -261,9 +263,11 @@ class ACROSSBase:
                 key.replace("filename", "file"): (
                     # Return either the existing filelike object, or open the file
                     value.name,
-                    getattr(self, key.replace("filename", "file"))
-                    if hasattr(self, key.replace("filename", "file"))
-                    else value.open("rb"),
+                    (
+                        getattr(self, key.replace("filename", "file"))
+                        if hasattr(self, key.replace("filename", "file"))
+                        else value.open("rb")
+                    ),
                     "application/octet-stream",
                 )
                 for key, value in self._post_schema.model_validate(self)

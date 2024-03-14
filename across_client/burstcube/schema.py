@@ -1,14 +1,10 @@
-from enum import Enum
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional
 
-from pydantic import ConfigDict, FilePath, model_validator  # type: ignore
+from pydantic import ConfigDict, FilePath  # type: ignore
 
-from ..base.schema import (
-    BaseSchema,
-    OptionalDateRangeSchema,
-    OptionalPositionSchema,
-)
+from ..base.schema import BaseSchema, OptionalDateRangeSchema, OptionalPositionSchema
 
 
 class TOOReason(str, Enum):

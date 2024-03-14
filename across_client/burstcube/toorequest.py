@@ -1,4 +1,5 @@
 import io
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional, Union
 
@@ -8,8 +9,6 @@ from across_client.base.schema import AuthToken
 
 from ..across.resolve import ACROSSResolveName
 from ..base.common import ACROSSBase
-from ..base.daterange import ACROSSDateRange
-from ..base.user import ACROSSUser
 from .constants import MISSION
 from .schema import (
     BurstCubeTOOGetSchema,
@@ -19,10 +18,13 @@ from .schema import (
     BurstCubeTOORequestsSchema,
     BurstCubeTOOSchema,
     BurstCubeTriggerInfo,
+    TOOReason,
+    TOOStatus,
 )
 
 
-class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
+@dataclass
+class TOO(ACROSSBase, ACROSSResolveName):
     """
     Class representing a Target of Opportunity (TOO) request.
 
@@ -51,43 +53,54 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         The healpix file handle for the TOO observation, takes a file like object.
     trigger_info : BurstCubeTriggerInfo
         The trigger information for the TOO observation.
-
-    Attributes:
-    ----------
-    timestamp : datetime
-        The time at which the TOO request was made.
     too_info : str
-        The TOO information, including warnings etc.
-    reason : str
-        The reason for the TOO request being rejected.
+        The information about the TOO observation.
     status : str
         The status of the TOO request.
     id : str
         The ID of the TOO request.
 
-    Methods:
-    -------
-    __init__(self, **kwargs)
-        Initializes a new instance of the TOO class.
 
+    Attributes:
+    ----------
+    created_on : datetime
+        The time at which the TOO request was made.
+    created_by : str
+        The user who made the TOO request.
+    modified_on : datetime
+        The time at which the TOO request was last modified.
+    modified_by : str
+        The user who modified the TOO request.
+    reject_reason : str
+        The reason for the TOO request being rejected.
+    status : str
+        The status of the TOO request.
+    too_info : str
+        The information about the TOO request.
+    id : str
+        The ID of the TOO request.
     """
 
-    trigger_time: datetime
-    healpix_filename: Optional[FilePath]
-    healpix_file: Union[io.BytesIO, io.BufferedReader, None]
-
-    ra: Optional[float]
-    dec: Optional[float]
-    begin: datetime
-    end: datetime
-    exposure: float
-    offset: float
-    too_info: str
-    trigger_info: BurstCubeTriggerInfo
-    credential: Optional[AuthToken]
+    credential: Optional[AuthToken] = None
+    id: Optional[str] = None
+    trigger_time: Optional[datetime] = None
+    created_by: Optional[str] = None
+    created_on: Optional[datetime] = None
+    modified_by: Optional[str] = None
+    modified_on: Optional[datetime] = None
+    trigger_info: BurstCubeTriggerInfo = field(default_factory=BurstCubeTriggerInfo)
+    exposure: float = 200
+    offset: float = -50
+    too_info: str = ""
+    ra: Optional[float] = None
+    dec: Optional[float] = None
+    error_radius: Optional[float] = None
+    healpix_filename: Optional[FilePath] = None
+    healpix_file: Union[io.BytesIO, io.BufferedReader, None] = None
+    reject_reason: TOOReason = TOOReason.none
+    status: TOOStatus = TOOStatus.requested
 
     # API definitions
-
     _mission = MISSION
     _api_name = "TOO"
     _schema = BurstCubeTOOSchema
@@ -95,17 +108,6 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
     _post_schema = BurstCubeTOOPostSchema
     _get_schema = BurstCubeTOOGetSchema
     _del_schema = BurstCubeTOOGetSchema
-
-    def __init__(self, **kwargs):
-        self.id = None
-        self.exposure = 200
-        self.offset = -50
-
-        for k, a in kwargs.items():
-            if k in self._schema.model_fields.keys():
-                setattr(self, k, a)
-        if "credential" in kwargs.keys():
-            self.credential = kwargs["credential"]
 
     @classmethod
     def submit_too(cls, **kwargs):
@@ -149,7 +151,7 @@ class TOO(ACROSSBase, ACROSSUser, ACROSSResolveName, ACROSSDateRange):
         )
 
 
-class TOORequests(ACROSSBase, ACROSSUser):
+class TOORequests(ACROSSBase):
     """
     Represents a Targer of Opportunity (TOO) request.
 
@@ -186,7 +188,7 @@ class TOORequests(ACROSSBase, ACROSSUser):
             self.get()
 
         # Convert the entries to a list of TOO objects
-        # self.entries = [TOO(**entry.model_dump()) for entry in self.entries]
+        self.entries = [TOO(**entry.__dict__) for entry in self.entries]
 
     @property
     def _table(self):
