@@ -225,9 +225,11 @@ class ACROSSBase:
                 key: (
                     # Return either the existing filelike object, or open the file
                     value.name,
-                    getattr(self, key.replace("filename", "file"))
-                    if hasattr(self, key.replace("filename", "file"))
-                    else value.open("rb"),
+                    (
+                        getattr(self, key.replace("filename", "file"))
+                        if hasattr(self, key.replace("filename", "file"))
+                        else value.open("rb")
+                    ),
                 )
                 for key, value in self._post_schema.model_validate(self)
                 if type(value) is PosixPath
