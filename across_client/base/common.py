@@ -261,14 +261,18 @@ class ACROSSBase:
             # Extract any files out of the arguments
             files: Dict[str, Tuple[Optional[str], Any, str]] = {
                 key: (
-                    PosixPath(getattr(self, key + "name")).name,
+                    PosixPath(getattr(self, key + "name")).name
+                    if getattr(self, key) is not None
+                    else None,
                     open(getattr(self, key + "name"), "rb"),
                     "application/octet-stream",
                 )
                 if getattr(self, key) is None
                 and getattr(self, key + "name") is not None
                 else (
-                    PosixPath(getattr(self, key).name).name,
+                    PosixPath(getattr(self, key).name).name
+                    if getattr(self, key) is not None
+                    else None,
                     getattr(self, key),
                     "application/octet-stream",
                 )

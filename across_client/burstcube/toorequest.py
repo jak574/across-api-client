@@ -31,7 +31,8 @@ class TOO(ACROSSBase, ACROSSResolveName):
     Parameters:
     ----------
     credential: AuthToken
-        The credential for login obtained from the get_credential function.
+        The credential for login obtained from the get_credential function, or
+        using Authentication.access_token.
     trigger_time : datetime
         The time of the trigger.
     ra : Optional[float]
