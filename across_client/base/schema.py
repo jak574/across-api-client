@@ -1,4 +1,4 @@
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from astropy.coordinates import SkyCoord  # type: ignore
@@ -156,9 +156,9 @@ class AuthToken(BaseSchema):
     @property
     def is_expired(self) -> bool:
         """Check if the token is expired"""
-        return datetime.now(tz=UTC) > self.expires_at
+        return datetime.now(tz=timezone.utc) > self.expires_at
 
     @model_validator(mode="before")
     def set_expires_at(cls, data, validator):
-        data["expires_at"] = datetime.fromtimestamp(data["expires_at"], tz=UTC)
+        data["expires_at"] = datetime.fromtimestamp(data["expires_at"], tz=timezone.utc)
         return data
