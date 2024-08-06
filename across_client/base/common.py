@@ -199,6 +199,8 @@ class ACROSSBase:
                 for k, v in self._schema.model_validate(req.json()):
                     setattr(self, k, v)
                 return True
+            elif req.status_code == 503:
+                print("ERROR: ", req.status_code, "Service Unavailable for ", req.url)
             else:
                 print("ERROR: ", req.status_code, req.json())
                 req.raise_for_status()
